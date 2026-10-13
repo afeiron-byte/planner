@@ -247,22 +247,22 @@
       color: var(--text-main);
     }
 
-    /* 수정 포인트: 캘린더 글자 크기 및 주별 간격(높이) 확대 */
+    /* 캘린더 글자 크기 및 주별 간격(높이) 확보 */
     .calendar-table {
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
-      font-size: 8px; /* 7.5px -> 8px 로 상향 */
+      font-size: 8px;
       text-align: center;
     }
     .calendar-table th {
-      padding: 2px 0; /* 여백 약간 확대 */
+      padding: 2px 0;
       color: var(--text-muted);
       font-weight: 600;
     }
     .calendar-table td {
-      padding: 2.5px 0; /* 여백 확대 */
-      height: 14.5px; /* 기존 11px -> 14.5px 로 높이를 키워 주별 간격을 넓힘 */
+      padding: 2.5px 0;
+      height: 14.5px;
       color: var(--text-main);
       vertical-align: middle;
     }
@@ -275,7 +275,7 @@
       border-radius: 50%;
     }
 
-    /* 캘린더 아래 행사 목록 (하단 빈공간 축소 효과) */
+    /* 캘린더 아래 행사 목록 2단 다단 */
     .month-events-box {
       margin-top: 3px;
       border-top: 1px dashed var(--border-light);
@@ -293,13 +293,13 @@
       gap: 1.5px;
     }
     .event-item {
-      font-size: 7px; /* 6.8px -> 7px 상향 */
+      font-size: 7px;
       line-height: 1.35;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       color: #444;
-      height: 10.5px; /* 9px -> 10.5px */
+      height: 10.5px;
     }
     .event-badge {
       display: inline-block;
@@ -984,9 +984,10 @@
       return day !== 0 && day !== 6;
     }
 
+    /* 개교기념일도 빨간색 배지로 강조 포함 */
     function isExamEvent(text) {
       if (text.includes('학생건강체력평가')) return false;
-      return text.includes('시험') || text.includes('학력평가') || text.includes('모의평가') || text.includes('대학수학능력시험');
+      return text.includes('시험') || text.includes('학력평가') || text.includes('모의평가') || text.includes('대학수학능력시험') || text.includes('개교기념일');
     }
 
     const academicCalendar = {};
