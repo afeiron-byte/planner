@@ -8,13 +8,13 @@
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Montserrat:wght@400;600;700&display=swap');
 
     :root {
-      --bg-color: #FAF8F5; /* 눈의 피로를 줄여주는 소프트 미색 */
+      --bg-color: #FAF8F5; /* 눈이 편안한 소프트 미색 */
       --card-bg: #FFFFFF;
       --border-color: #E2DDD5;
       --border-light: #ECE8E1;
       --text-main: #33312E;
       --text-muted: #8E887E;
-      --school-red: #B2280E; /* 세일고 CI 상징 붉은색 */
+      --school-red: #B2280E;
       --accent: #5C5248;
       --accent-exam: #B85D5D;
       --accent-sat: #4B6E94;
@@ -122,12 +122,12 @@
       overflow: hidden;
     }
 
-    /* 플래너 내부 프레임 */
+    /* 플래너 프레임 내부 그리드: 컨텐츠 + 우측 탭 */
     .planner-container {
       width: 100%;
       height: 100%;
       display: flex;
-      gap: 10mm;
+      gap: 8mm;
       position: relative;
     }
 
@@ -137,17 +137,19 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      min-width: 0;
     }
 
     /* 우측 고정 인덱스 탭 (3월 ~ 익년 2월 + NOTE) */
     .right-sidebar {
-      width: 26px;
+      width: 24px;
       height: 100%;
       display: flex;
       flex-direction: column;
       border-left: 1px solid var(--border-color);
       padding-left: 4px;
       gap: 2px;
+      flex-shrink: 0;
     }
 
     .index-tab {
@@ -155,7 +157,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 8.5px;
+      font-size: 8px;
       font-weight: 700;
       color: var(--text-muted);
       cursor: pointer;
@@ -174,28 +176,31 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 2px solid var(--text-main);
-      padding-bottom: 5px;
-      margin-bottom: 8px;
+      padding-bottom: 4px;
+      margin-bottom: 6px;
+      height: 38px;
+      flex-shrink: 0;
     }
     .sheet-title-group {
       display: flex;
       flex-direction: column;
     }
     .sheet-title {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 700;
       letter-spacing: -0.5px;
       color: var(--text-main);
     }
     .sheet-sub {
-      font-size: 10.5px;
+      font-size: 10px;
       color: var(--text-muted);
     }
 
-    /* 세일고 로고 SVG */
-    .school-logo-svg {
-      width: 38px;
-      height: 38px;
+    /* 세일고 CI 로고 이미지 */
+    .school-logo-img {
+      height: 34px;
+      width: auto;
+      object-fit: contain;
       flex-shrink: 0;
     }
 
@@ -205,7 +210,7 @@
       transition: background 0.2s;
     }
     [contenteditable="true"]:focus {
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.9);
       border-radius: 2px;
     }
 
@@ -216,18 +221,19 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       grid-template-rows: repeat(3, 1fr);
-      gap: 7px;
+      gap: 6px;
       flex: 1;
-      height: calc(100% - 46px);
+      height: calc(100% - 44px);
     }
 
     .month-card {
       border: 1px solid var(--border-color);
       background: var(--card-bg);
       border-radius: 4px;
-      padding: 5px 7px;
+      padding: 4px 6px;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
 
     .month-card-header {
@@ -236,7 +242,7 @@
       align-items: center;
       border-bottom: 1px solid var(--border-light);
       padding-bottom: 2px;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
     .month-card-title {
       font-size: 11px;
@@ -248,17 +254,17 @@
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
-      font-size: 8px;
+      font-size: 7.5px;
       text-align: center;
     }
     .calendar-table th {
-      padding: 1.5px 0;
+      padding: 1px 0;
       color: var(--text-muted);
       font-weight: 600;
     }
     .calendar-table td {
-      padding: 1.5px 0;
-      height: 13px;
+      padding: 1px 0;
+      height: 11px;
       color: var(--text-main);
       vertical-align: middle;
     }
@@ -271,41 +277,51 @@
       border-radius: 50%;
     }
 
+    /* 캘린더 아래 2단 다단 행사 목록 (각 열 6줄 기준) */
     .month-events-box {
       margin-top: 3px;
       border-top: 1px dashed var(--border-light);
-      padding-top: 3px;
+      padding-top: 2px;
       flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 4px;
+      row-gap: 1px;
       overflow: hidden;
-      font-size: 7.5px;
-      line-height: 1.3;
-      color: #555;
+    }
+    .event-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
     }
     .event-item {
+      font-size: 6.8px;
+      line-height: 1.25;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      margin-bottom: 1px;
+      color: #444;
+      height: 10px;
     }
     .event-badge {
       display: inline-block;
-      padding: 0 2px;
+      padding: 0 1.5px;
       border-radius: 2px;
-      font-weight: 600;
-      font-size: 7px;
+      font-weight: 700;
+      font-size: 6.5px;
       margin-right: 2px;
     }
     .badge-exam { background: #FDE8E8; color: #B85D5D; }
     .badge-normal { background: #ECEAE4; color: #555048; }
 
     /* =========================================================
-       2. 월간 플래너 (좌측 체크리스트/메모 + 우측 달력)
+       2. 월간 플래너
        ========================================================= */
     .monthly-container {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       flex: 1;
-      height: calc(100% - 46px);
+      height: calc(100% - 44px);
     }
 
     .monthly-left {
@@ -313,7 +329,7 @@
       height: 100%;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .monthly-header-badge {
@@ -322,13 +338,13 @@
       gap: 6px;
     }
     .monthly-num {
-      font-size: 38px;
+      font-size: 36px;
       font-weight: 700;
       line-height: 1;
       color: var(--text-main);
     }
     .monthly-en {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 400;
       color: var(--text-muted);
     }
@@ -337,23 +353,24 @@
       border: 1px solid var(--border-color);
       background: var(--card-bg);
       border-radius: 4px;
-      padding: 8px;
+      padding: 6px 8px;
       display: flex;
       flex-direction: column;
+      min-width: 0;
     }
     .box-title {
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 700;
-      letter-spacing: 1px;
+      letter-spacing: 0.8px;
       color: var(--text-muted);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       text-transform: uppercase;
     }
 
     .checklist-list {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
       flex: 1;
     }
     .check-item {
@@ -361,11 +378,11 @@
       align-items: center;
       gap: 6px;
       border-bottom: 1px solid #F2EEE8;
-      padding-bottom: 3px;
+      padding-bottom: 2px;
     }
     .circle-checkbox {
-      width: 12px;
-      height: 12px;
+      width: 11px;
+      height: 11px;
       border: 1px solid var(--border-color);
       border-radius: 50%;
       flex-shrink: 0;
@@ -373,7 +390,7 @@
     }
     .check-text {
       flex: 1;
-      font-size: 10px;
+      font-size: 9.5px;
       min-height: 14px;
     }
 
@@ -391,6 +408,7 @@
       height: 100%;
       display: flex;
       flex-direction: column;
+      min-width: 0;
     }
 
     .month-cal-table {
@@ -403,8 +421,8 @@
     }
     .month-cal-table th {
       border: 1px solid var(--border-color);
-      padding: 5px 0;
-      font-size: 10px;
+      padding: 4px 0;
+      font-size: 9.5px;
       font-weight: 600;
       color: var(--text-muted);
       background: #FDFCF9;
@@ -412,18 +430,18 @@
     .month-cal-table td {
       border: 1px solid var(--border-color);
       vertical-align: top;
-      padding: 4px 6px;
+      padding: 3px 5px;
       height: 18%;
       position: relative;
     }
     .cell-date-num {
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 600;
     }
     .sun .cell-date-num { color: var(--accent-sun); }
     .sat .cell-date-num { color: var(--accent-sat); }
     .cell-event {
-      font-size: 8px;
+      font-size: 7.5px;
       margin-top: 2px;
       padding: 1px 3px;
       border-radius: 2px;
@@ -432,14 +450,14 @@
       text-overflow: ellipsis;
     }
     .cell-note {
-      font-size: 9px;
-      min-height: 25px;
+      font-size: 8.5px;
+      min-height: 22px;
       margin-top: 2px;
     }
 
     .week-col {
-      width: 22px;
-      font-size: 8px;
+      width: 20px;
+      font-size: 7.5px;
       text-align: center;
       vertical-align: middle !important;
       color: var(--text-muted);
@@ -454,14 +472,14 @@
     .weekly-container {
       display: flex;
       flex-direction: column;
-      height: calc(100% - 46px);
-      gap: 8px;
+      height: calc(100% - 44px);
+      gap: 6px;
     }
 
     .weekly-top {
       display: grid;
       grid-template-columns: 180px 1.2fr 1fr 1fr;
-      gap: 8px;
+      gap: 6px;
       height: 38%;
     }
 
@@ -469,29 +487,29 @@
       border: 1px solid var(--border-color);
       background: var(--card-bg);
       border-radius: 4px;
-      padding: 8px;
+      padding: 6px 8px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
     .weekly-title-row {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
     }
 
     .tracker-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 9px;
+      font-size: 8.5px;
     }
     .tracker-table th, .tracker-table td {
-      padding: 3px 2px;
+      padding: 2.5px 2px;
       text-align: center;
       border-bottom: 1px solid var(--border-light);
     }
     .tracker-dot {
-      width: 10px;
-      height: 10px;
+      width: 9px;
+      height: 9px;
       border: 1px solid var(--border-color);
       border-radius: 50%;
       display: inline-block;
@@ -501,7 +519,7 @@
     .weekly-bottom {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      gap: 6px;
       height: 60%;
     }
 
@@ -516,16 +534,16 @@
     .day-pill-header {
       background: #F8F5EE;
       text-align: center;
-      padding: 4px 0;
-      font-size: 10px;
+      padding: 3px 0;
+      font-size: 9.5px;
       font-weight: 700;
       border-bottom: 1px solid var(--border-color);
       border-radius: 12px;
-      margin: 4px 6px;
+      margin: 3px 5px;
     }
     .day-pill-content {
       flex: 1;
-      padding: 6px;
+      padding: 5px;
       background-size: 4mm 4mm;
       background-image: 
         linear-gradient(to right, #ECE8E1 1px, transparent 1px),
@@ -533,28 +551,31 @@
     }
 
     /* =========================================================
-       4. 일간 플래너
+       4. 일간 플래너 (잘림 방지: 3단 너비 최적화)
        ========================================================= */
     .daily-container {
       display: grid;
-      grid-template-columns: 28% 34% 38%;
-      gap: 9px;
-      height: calc(100% - 46px);
+      grid-template-columns: 26% 28% 46%; /* 타임테이블 축소 & 우측 셀 공간 대폭 확보 */
+      gap: 8px;
+      height: calc(100% - 44px);
+      width: 100%;
+      min-width: 0;
     }
 
     .daily-col {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
       height: 100%;
+      min-width: 0;
     }
 
     .goal-card {
       border: 1px solid var(--border-color);
       background: var(--card-bg);
       border-radius: 4px;
-      padding: 8px;
-      height: 25%;
+      padding: 6px 8px;
+      height: 24%;
       display: flex;
       flex-direction: column;
     }
@@ -562,8 +583,8 @@
       border: 1px solid var(--border-color);
       background: var(--card-bg);
       border-radius: 4px;
-      padding: 8px;
-      height: 52%;
+      padding: 6px 8px;
+      height: 54%;
       display: flex;
       flex-direction: column;
     }
@@ -571,8 +592,8 @@
       border: 1px solid var(--border-color);
       background: var(--card-bg);
       border-radius: 4px;
-      padding: 8px;
-      height: 23%;
+      padding: 6px 8px;
+      height: 22%;
       display: flex;
       flex-direction: column;
     }
@@ -581,17 +602,18 @@
       border: 1px solid var(--border-color);
       background: var(--card-bg);
       border-radius: 4px;
-      padding: 6px 8px;
+      padding: 5px 6px;
       height: 100%;
       display: flex;
       flex-direction: column;
+      min-width: 0;
     }
     .tt-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 4px;
-      padding-bottom: 3px;
+      margin-bottom: 3px;
+      padding-bottom: 2px;
       border-bottom: 1px solid var(--border-light);
     }
     .time-slot-list {
@@ -607,49 +629,53 @@
       height: calc(100% / 23);
     }
     .time-label {
-      width: 32px;
-      font-size: 8.5px;
+      width: 28px;
+      font-size: 8px;
       color: var(--text-muted);
       font-weight: 600;
+      flex-shrink: 0;
     }
     .time-fill-area {
       flex: 1;
       height: 100%;
-      font-size: 8.5px;
-      padding: 0 4px;
+      font-size: 8px;
+      padding: 0 3px;
       display: flex;
       align-items: center;
+      min-width: 0;
     }
 
     .daily-right-top {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      height: 38%;
+      gap: 6px;
+      height: 36%;
+      min-width: 0;
     }
     .daily-right-bot {
-      height: 62%;
+      height: 64%;
       border: 1px solid var(--border-color);
       background: var(--card-bg);
       border-radius: 4px;
-      padding: 8px;
+      padding: 6px 8px;
       display: flex;
       flex-direction: column;
+      min-width: 0;
     }
 
     .mood-water-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 0;
+      padding: 4px 0;
       border-bottom: 1px solid var(--border-light);
     }
     .icon-list {
       display: flex;
-      gap: 6px;
+      gap: 5px;
     }
     .mood-icon, .cup-icon {
-      font-size: 12px;
+      font-size: 11px;
       cursor: pointer;
       opacity: 0.45;
     }
@@ -659,15 +685,15 @@
     }
 
     /* =========================================================
-       5. 메모 노트 (코넬식, 오답노트, 모눈, 라인, 도트, 무지)
+       5. 메모 노트 (코넬식, 오답노트, 그리드, 라인, 도트, 무지)
        ========================================================= */
     .note-container {
       width: 100%;
-      height: calc(100% - 46px);
+      height: calc(100% - 44px);
       border: 1px solid var(--border-color);
       background: var(--card-bg);
       border-radius: 4px;
-      padding: 10px;
+      padding: 8px;
       display: flex;
       flex-direction: column;
     }
@@ -689,7 +715,7 @@
       background-size: 5mm 5mm;
     }
 
-    /* 코넬식 노트 레이아웃 */
+    /* 코넬식 노트 */
     .cornell-wrapper {
       display: flex;
       flex-direction: column;
@@ -724,19 +750,19 @@
       background: #FAF8F5;
     }
 
-    /* 오답 노트 레이아웃 */
+    /* 오답 정리 노트 (4번 셀도 완전 무지 Blank 적용) */
     .wrong-answer-wrapper {
       display: grid;
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 45% 55%;
-      gap: 8px;
+      gap: 6px;
       height: 100%;
     }
     .wrong-card {
       border: 1px solid var(--border-color);
       background: #FFFFFF;
       border-radius: 4px;
-      padding: 8px;
+      padding: 6px 8px;
       display: flex;
       flex-direction: column;
     }
@@ -778,7 +804,6 @@
     </div>
 
     <div class="toolbar-right">
-      <!-- 2027.03 ~ 2028.02 셀렉터 -->
       <div id="monthSelectorWrapper" class="sub-control" style="display:none;">
         <label>월 선택:</label>
         <select id="monthSelect" onchange="changeAcademicMonth(this.value)">
@@ -816,8 +841,8 @@
       <div id="noteStyleWrapper" class="sub-control" style="display:none;">
         <label>노트 서식:</label>
         <select id="notePatternSelect" onchange="changeNotePattern(this.value)">
-          <option value="cornell">코넬식 노트 (Cornell)</option>
           <option value="wrong">오답 정리 노트 (Error Analysis)</option>
+          <option value="cornell">코넬식 노트 (Cornell)</option>
           <option value="grid" selected>모눈종이 (Grid)</option>
           <option value="lined">라인형 (Lined)</option>
           <option value="dot">도트형 (Dot)</option>
@@ -857,47 +882,11 @@
   </div>
 
   <script>
-    /* ====================================================================
-       세일고등학교 원형 로고 SVG 코드 (우측 상단 배치용)
-       ==================================================================== */
-    const seilLogoSvg = `
-      <svg class="school-logo-svg" viewBox="0 0 500 500">
-        <!-- 외곽 이중 원선 -->
-        <circle cx="250" cy="250" r="240" fill="none" stroke="#B2280E" stroke-width="10"/>
-        <circle cx="250" cy="250" r="225" fill="#B2280E"/>
-        <circle cx="250" cy="250" r="172" fill="#FFFFFF"/>
-        
-        <!-- 상단 영문 텍스트 호: SE-IL HIGH SCHOOL 1983 -->
-        <path id="textArcTop" d="M 75,250 A 175,175 0 0,1 425,250" fill="none"/>
-        <text fill="#FFFFFF" font-family="'Montserrat', sans-serif" font-weight="700" font-size="34" letter-spacing="4">
-          <textPath href="#textArcTop" startOffset="50%" text-anchor="middle">
-            SE-IL HIGH SCHOOL 1983
-          </textPath>
-        </text>
-
-        <!-- 하단 국문 텍스트 호: 세 일 고 등 학 교 -->
-        <path id="textArcBottom" d="M 85,250 A 165,165 0 0,0 415,250" fill="none"/>
-        <text fill="#FFFFFF" font-family="'Noto Sans KR', sans-serif" font-weight="700" font-size="33" letter-spacing="14">
-          <textPath href="#textArcBottom" startOffset="50%" text-anchor="middle">
-            세 일 고 등 학 교
-          </textPath>
-        </text>
-
-        <!-- 중앙 심볼 마크 (세일 상징 문양) -->
-        <g stroke="#B2280E" stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" fill="none">
-          <path d="M 170,225 L 295,225 L 295,190" />
-          <path d="M 230,190 L 230,240" />
-          <path d="M 265,190 L 265,240" />
-          <path d="M 205,225 L 205,270 L 360,270 L 360,240" />
-          <path d="M 215,225 C 215,190 170,190 170,225 Z" fill="#B2280E" />
-          <path d="M 315,270 L 325,315 L 290,310" />
-          <path d="M 360,240 C 395,240 395,270 360,270 Z" fill="#B2280E" />
-        </g>
-      </svg>
-    `;
+    // 세일고CI-01.png 파일 직접 로드 (깨짐 방지 및 정밀 렌더링)
+    const seilLogoHtml = `<img src="세일고CI-01.png" alt="세일고 로고" class="school-logo-img">`;
 
     /* ====================================================================
-       2027학년도(2027.03 ~ 2028.02) 학사일정 데이터 (토/일 자동 필터링)
+       2027학년도(2027.03 ~ 2028.02) 학사일정 데이터 (토/일 제외)
        ==================================================================== */
     const rawEvents = [
       { start: '2027-03-02', summary: '입학식 및 개학식' },
@@ -916,7 +905,7 @@
       { start: '2027-04-12', summary: '학생자치회 대의원총회' },
       { start: '2027-04-14', summary: '학생건강체력평가(2학년)' },
       { start: '2027-04-16', summary: '창체동아리활동' },
-      // 1학기 1차 시험 (4.29~30, 5.3~4 / 토일 제외)
+      // 1학기 1차 시험
       { start: '2027-04-29', summary: '1학기 1차 시험' },
       { start: '2027-04-30', summary: '1학기 1차 시험' },
       { start: '2027-05-03', summary: '1학기 1차 시험' },
@@ -928,17 +917,17 @@
       { start: '2027-05-19', summary: '학생건강체력평가(1학년)' },
       { start: '2027-05-21', summary: '학생건강체력평가' },
       { start: '2027-05-26', summary: '보카 마스터 챌린지' },
-      { start: '2027-05-28', summary: '모범학생표창/창체동아리' },
+      { start: '2027-05-28', summary: '모범학생표창/동아리' },
       { start: '2027-06-02', summary: '모의평가/전국연합평가' },
       { start: '2027-06-04', summary: '현장체험학습' },
       { start: '2027-06-07', summary: '수학탐구한마당' },
       { start: '2027-06-08', summary: '수학탐구한마당' },
-      { start: '2027-06-09', summary: '소통공감한마당/학부모공개수업' },
+      { start: '2027-06-09', summary: '소통공감/학부모공개수업' },
       { start: '2027-06-10', summary: '수학탐구한마당' },
       { start: '2027-06-11', summary: '흡연예방교육' },
       { start: '2027-06-14', summary: '학생자치회 대의원총회' },
       { start: '2027-06-18', summary: '창체동아리활동' },
-      // 1학기 2차 시험 (6.30~7.2, 7.5~6 / 토일 제외)
+      // 1학기 2차 시험
       { start: '2027-06-30', summary: '1학기 2차 시험' },
       { start: '2027-07-01', summary: '1학기 2차 시험' },
       { start: '2027-07-02', summary: '1학기 2차 시험' },
@@ -951,14 +940,14 @@
       { start: '2027-07-15', summary: '방학식 (1학기 종업)' },
       { start: '2027-08-18', summary: '2학기 개학식' },
       { start: '2027-08-20', summary: '창체동아리활동' },
-      { start: '2027-08-23', summary: '2학기 학급회장/부회장 임명' },
+      { start: '2027-08-23', summary: '2학기 임원 임명' },
       { start: '2027-08-25', summary: '모의평가/전국연합평가' },
       { start: '2027-08-27', summary: '창체동아리활동' },
       { start: '2027-08-31', summary: '수시 학생부 작성 기준일' },
       { start: '2027-09-10', summary: '진로탐색의 날' },
       { start: '2027-09-13', summary: '학생자치회 대의원총회' },
       { start: '2027-09-17', summary: '재량휴업' },
-      { start: '2027-09-20', summary: '수시 원서 접수(~23일)' },
+      { start: '2027-09-20', summary: '수시 원서 접수 시작' },
       { start: '2027-09-24', summary: '창체동아리활동' },
       { start: '2027-09-30', summary: '개교기념일 행사' },
       { start: '2027-10-01', summary: '개교기념일' },
@@ -969,10 +958,10 @@
       { start: '2027-10-19', summary: '전국연합학력평가' },
       { start: '2027-10-20', summary: '독서체험한마당' },
       { start: '2027-10-22', summary: '과학대제전/수학축전' },
-      { start: '2027-10-25', summary: '학교폭력예방 포스터 전시' },
+      { start: '2027-10-25', summary: '폭력예방 포스터 전시' },
       { start: '2027-10-27', summary: '수학여행/공개수업' },
       { start: '2027-10-28', summary: '수학여행' },
-      { start: '2027-10-29', summary: '수학여행/모범학생표창' },
+      { start: '2027-10-29', summary: '수학여행/표창/스포츠' },
       { start: '2027-11-05', summary: '창체동아리활동' },
       { start: '2027-11-08', summary: '학생자치회 대의원총회' },
       { start: '2027-11-18', summary: '대학수학능력시험' },
@@ -982,7 +971,7 @@
       { start: '2027-12-07', summary: '2학기 2차 시험' },
       { start: '2027-12-08', summary: '2학기 2차 시험' },
       { start: '2027-12-09', summary: '2학기 2차 시험' },
-      { start: '2027-12-10', summary: '2학기 2차 시험/수능성적발표' },
+      { start: '2027-12-10', summary: '2학기 2차 시험/수능성적' },
       { start: '2027-12-17', summary: '창체동아리활동' },
       { start: '2027-12-21', summary: '수시 합격자 발표마감' },
       { start: '2027-12-24', summary: '세일어울림한마당/축제' },
@@ -1000,11 +989,16 @@
       { start: '2028-02-28', summary: '신학년 업무' }
     ];
 
-    // 평일 여부 판정 유틸리티
     function isWeekday(y, m, d) {
       const dt = new Date(y, m, d);
       const day = dt.getDay();
       return day !== 0 && day !== 6;
+    }
+
+    // 학생건강체력평가는 일반 행사로 분류, 시험/학력평가만 빨간색
+    function isExamEvent(text) {
+      if (text.includes('학생건강체력평가')) return false;
+      return text.includes('시험') || text.includes('학력평가') || text.includes('모의평가') || text.includes('대학수학능력시험');
     }
 
     const academicCalendar = {};
@@ -1017,7 +1011,6 @@
       }
     });
 
-    // 2027학년도 12개월 목록 (2027.03 ~ 2028.02)
     const academicMonths = [
       { year: 2027, month: 2, label: '3월', en: 'March' },
       { year: 2027, month: 3, label: '4월', en: 'April' },
@@ -1034,8 +1027,8 @@
     ];
 
     let currentView = 'yearly';
-    let currentAcademicIdx = 0; // 0은 2027년 3월
-    let currentNotePattern = 'grid';
+    let currentAcademicIdx = 0;
+    let currentNotePattern = 'wrong';
 
     function switchView(view) {
       currentView = view;
@@ -1086,9 +1079,9 @@
       else if (currentView === 'note') renderNote(container);
     }
 
-    /* ====================================================================
-       1. 연간 플래너 (4 x 3: 2027.03 ~ 2028.02)
-       ==================================================================== */
+    /* =========================================================
+       1. 연간 플래너 (각 월별 행사 2단 다단 분할: 좌측 6개, 우측 6개)
+       ========================================================= */
     function renderYearly(container) {
       let html = `
         <div class="sheet-header">
@@ -1096,7 +1089,7 @@
             <div class="sheet-title">2027 ACADEMIC CALENDAR</div>
             <div class="sheet-sub">세일고등학교 2027학년도 연간 학사일정 (2027.03 ~ 2028.02)</div>
           </div>
-          ${seilLogoSvg}
+          ${seilLogoHtml}
         </div>
         <div class="yearly-grid">
       `;
@@ -1110,7 +1103,7 @@
         html += `
           <div class="month-card">
             <div class="month-card-header">
-              <span class="month-card-title">${y === 2028 ? "'" + 28 + " " : ""}${mObj.label} <small style="font-weight:400;color:var(--text-muted);font-size:8.5px;">${mObj.en}</small></span>
+              <span class="month-card-title">${y === 2028 ? "'" + 28 + " " : ""}${mObj.label} <small style="font-weight:400;color:var(--text-muted);font-size:8px;">${mObj.en}</small></span>
             </div>
             <table class="calendar-table">
               <thead>
@@ -1157,17 +1150,31 @@
           <div class="month-events-box" contenteditable="true">
         `;
 
-        if (eventsInMonth.length > 0) {
-          eventsInMonth.slice(0, 3).forEach(ev => {
-            const isExam = ev.text.includes('시험') || ev.text.includes('평가');
-            const badgeClass = isExam ? 'badge-exam' : 'badge-normal';
-            html += `<div class="event-item"><span class="event-badge ${badgeClass}">${ev.day}일</span>${ev.text}</div>`;
-          });
-        }
+        // 2단 분할 (좌측 최대 6개, 우측 나머지 최대 6개)
+        const leftColEvents = eventsInMonth.slice(0, 6);
+        const rightColEvents = eventsInMonth.slice(6, 12);
+
+        // 왼쪽 다단
+        html += `<div class="event-col">`;
+        leftColEvents.forEach(ev => {
+          const isExam = isExamEvent(ev.text);
+          const badgeClass = isExam ? 'badge-exam' : 'badge-normal';
+          html += `<div class="event-item" title="${ev.day}일 ${ev.text}"><span class="event-badge ${badgeClass}">${ev.day}</span>${ev.text}</div>`;
+        });
+        html += `</div>`;
+
+        // 오른쪽 다단
+        html += `<div class="event-col">`;
+        rightColEvents.forEach(ev => {
+          const isExam = isExamEvent(ev.text);
+          const badgeClass = isExam ? 'badge-exam' : 'badge-normal';
+          html += `<div class="event-item" title="${ev.day}일 ${ev.text}"><span class="event-badge ${badgeClass}">${ev.day}</span>${ev.text}</div>`;
+        });
+        html += `</div>`;
 
         html += `
-            </div>
           </div>
+        </div>
         `;
       });
 
@@ -1175,9 +1182,9 @@
       container.innerHTML = html;
     }
 
-    /* ====================================================================
-       2. 월간 플래너 (사진 1 구조: 12개 월 제공)
-       ==================================================================== */
+    /* =========================================================
+       2. 월간 플래너
+       ========================================================= */
     function renderMonthly(container) {
       const mObj = academicMonths[currentAcademicIdx];
       const y = mObj.year;
@@ -1187,12 +1194,12 @@
       const daysInMonth = new Date(y, m + 1, 0).getDate();
 
       let html = `
-        <div class="sheet-header" style="margin-bottom:6px;">
+        <div class="sheet-header">
           <div class="sheet-title-group">
             <div class="sheet-title">${y} MONTHLY PLANNER</div>
             <div class="sheet-sub">세일고등학교 월간 학습 및 학사 계획</div>
           </div>
-          ${seilLogoSvg}
+          ${seilLogoHtml}
         </div>
 
         <div class="monthly-container">
@@ -1235,7 +1242,7 @@
                   <th>THU</th>
                   <th>FRI</th>
                   <th style="color:var(--accent-sat);">SAT</th>
-                  <th style="width:24px;">WK</th>
+                  <th style="width:20px;">WK</th>
                 </tr>
               </thead>
               <tbody>
@@ -1263,10 +1270,10 @@
 
             if (events && events.length > 0) {
               events.forEach(ev => {
-                const isExam = ev.includes('시험') || ev.includes('평가');
-                const bg = isExam ? '#FDE8E8' : '#EEF2F6';
-                const color = isExam ? '#B85D5D' : '#334E68';
-                html += `<div class="cell-event" style="background:${bg}; color:${color};">${ev}</div>`;
+                const isExam = isExamEvent(ev);
+                const bg = isExam ? '#FDE8E8' : '#F1EFEA';
+                const color = isExam ? '#B85D5D' : '#4E4842';
+                html += `<div class="cell-event" style="background:${bg}; color:${color}; font-weight:${isExam ? '700' : '400'};">${ev}</div>`;
               });
             }
 
@@ -1290,21 +1297,21 @@
       container.innerHTML = html;
     }
 
-    /* ====================================================================
+    /* =========================================================
        3. 주간 플래너
-       ==================================================================== */
+       ========================================================= */
     function renderWeekly(container) {
       if (!container) container = document.getElementById('mainCanvas');
       const mObj = academicMonths[currentAcademicIdx];
       const w = parseInt(document.getElementById('weekSelect').value, 10);
 
       let html = `
-        <div class="sheet-header" style="margin-bottom:6px;">
+        <div class="sheet-header">
           <div class="sheet-title-group">
             <div class="sheet-title">WEEKLY STUDY PLAN</div>
             <div class="sheet-sub">세일고등학교 주간 목표 및 습관 관리</div>
           </div>
-          ${seilLogoSvg}
+          ${seilLogoHtml}
         </div>
 
         <div class="weekly-container">
@@ -1314,15 +1321,15 @@
                 <div class="weekly-title-row">${mObj.year}년 ${mObj.label} ${w}주차</div>
                 <div style="font-size:10px; color:var(--text-muted);">${mObj.en} · WEEK ${w}</div>
               </div>
-              <div style="margin-top:4px;">
-                <div style="font-size:8px; font-weight:700; color:var(--text-muted); margin-bottom:2px;">WEEKLY WRAP-UP</div>
-                <div style="height:48px; border:1px solid var(--border-light); border-radius:3px; padding:3px; font-size:9px;" contenteditable="true"></div>
+              <div style="margin-top:3px;">
+                <div style="font-size:7.5px; font-weight:700; color:var(--text-muted); margin-bottom:2px;">WEEKLY WRAP-UP</div>
+                <div style="height:44px; border:1px solid var(--border-light); border-radius:3px; padding:3px; font-size:8.5px;" contenteditable="true"></div>
               </div>
             </div>
 
             <div class="box-bordered" style="overflow:hidden;">
               <div class="box-title">TO-DO LIST</div>
-              <div style="display:flex; flex-direction:column; gap:5px;">
+              <div style="display:flex; flex-direction:column; gap:4px;">
                 ${[1, 2, 3, 4].map(() => `
                   <div class="check-item">
                     <div class="circle-checkbox" onclick="this.style.background = this.style.background ? '' : '#333'"></div>
@@ -1378,9 +1385,9 @@
       container.innerHTML = html;
     }
 
-    /* ====================================================================
-       4. 일간 플래너
-       ==================================================================== */
+    /* =========================================================
+       4. 일간 플래너 (우측 잘림 문제 완벽 해결)
+       ========================================================= */
     function renderDaily(container) {
       if (!container) container = document.getElementById('mainCanvas');
       const dateVal = document.getElementById('dailyDatePicker').value || '2027-03-02';
@@ -1390,26 +1397,34 @@
       const dayName = dayNames[dayDate.getDay()];
       const events = academicCalendar[dateVal] || [];
 
+      const eventBadgesHtml = events.map(ev => {
+        const isExam = isExamEvent(ev);
+        const bg = isExam ? '#FDE8E8' : '#ECE8E1';
+        const color = isExam ? '#B85D5D' : '#4E4842';
+        return `<span style="font-size:9.5px; background:${bg}; color:${color}; padding:1.5px 5px; border-radius:3px; font-weight:${isExam ? '700' : '500'};">${ev}</span>`;
+      }).join(' ');
+
       let html = `
-        <div class="sheet-header" style="margin-bottom:6px;">
+        <div class="sheet-header">
           <div class="sheet-title-group">
             <div style="display:flex; align-items:baseline; gap:8px;">
               <span class="sheet-title">${yr}년 ${mo}월 ${da}일</span>
-              <span style="font-size:12px; color:var(--text-muted); font-weight:600;">${dayName}</span>
-              ${events.length > 0 ? `<span style="font-size:10px; background:#FDE8E8; color:#B85D5D; padding:2px 6px; border-radius:3px; font-weight:700;">${events.join(', ')}</span>` : ''}
+              <span style="font-size:11px; color:var(--text-muted); font-weight:600;">${dayName}</span>
+              ${events.length > 0 ? eventBadgesHtml : ''}
             </div>
             <div class="sheet-sub">세일고등학교 일일 플래너 & 학습 기록</div>
           </div>
-          <div style="display:flex; align-items:center; gap:12px;">
-            <div style="display:flex; align-items:center; gap:8px; background:#FFF; border:1px solid var(--border-color); padding:3px 10px; border-radius:15px;">
-              <span style="font-size:10px; font-weight:700; color:var(--text-muted);">TOTAL STUDY</span>
-              <span style="font-size:12px; font-weight:700; color:#3B5A75;" contenteditable="true">__ h __ m</span>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="display:flex; align-items:center; gap:6px; background:#FFF; border:1px solid var(--border-color); padding:2px 8px; border-radius:12px;">
+              <span style="font-size:9px; font-weight:700; color:var(--text-muted);">TOTAL STUDY</span>
+              <span style="font-size:11px; font-weight:700; color:#3B5A75;" contenteditable="true">__ h __ m</span>
             </div>
-            ${seilLogoSvg}
+            ${seilLogoHtml}
           </div>
         </div>
 
         <div class="daily-container">
+          <!-- 좌측 컬럼 (26%) -->
           <div class="daily-col">
             <div class="goal-card">
               <div class="box-title">TODAY'S GOAL</div>
@@ -1434,11 +1449,12 @@
             </div>
           </div>
 
+          <!-- 중앙 타임테이블 (28%: 폭 축소하여 우측 공간 확보) -->
           <div class="daily-col">
             <div class="timetable-card">
               <div class="tt-header">
                 <span class="box-title" style="margin:0;">TIME TABLE</span>
-                <span style="font-size:8px; color:var(--text-muted);">04:00 - 02:00</span>
+                <span style="font-size:7.5px; color:var(--text-muted);">04:00 - 02:00</span>
               </div>
               <div class="time-slot-list">
                 ${Array.from({ length: 23 }, (_, i) => {
@@ -1455,6 +1471,7 @@
             </div>
           </div>
 
+          <!-- 우측 컬럼 (46%: 넉넉하게 확장되어 잘림 완벽 방지) -->
           <div class="daily-col">
             <div class="daily-right-top">
               <div class="box-bordered">
@@ -1463,14 +1480,14 @@
               </div>
               <div class="box-bordered" style="position:relative;">
                 <div class="box-title">DAILY MOTIVATION</div>
-                <div style="position:absolute; top:4px; right:8px; font-size:24px; color:#E8E2D8;">“</div>
-                <div style="flex:1; padding-top:4px; font-size:10px; font-style:italic;" contenteditable="true"></div>
+                <div style="position:absolute; top:3px; right:6px; font-size:20px; color:#E8E2D8; line-height:1;">“</div>
+                <div style="flex:1; padding-top:2px; font-size:9.5px; font-style:italic;" contenteditable="true"></div>
               </div>
             </div>
 
             <div class="daily-right-bot">
               <div class="mood-water-row">
-                <div style="display:flex; align-items:center; gap:6px;">
+                <div style="display:flex; align-items:center; gap:5px;">
                   <span class="box-title" style="margin:0;">MOOD</span>
                   <div class="icon-list">
                     <span class="mood-icon" onclick="this.classList.toggle('active')">😊</span>
@@ -1480,7 +1497,7 @@
                     <span class="mood-icon" onclick="this.classList.toggle('active')">😴</span>
                   </div>
                 </div>
-                <div style="display:flex; align-items:center; gap:6px;">
+                <div style="display:flex; align-items:center; gap:5px;">
                   <span class="box-title" style="margin:0;">WATER</span>
                   <div class="icon-list">
                     ${[1, 2, 3, 4, 5].map(() => `<span class="cup-icon" onclick="this.classList.toggle('active')">💧</span>`).join('')}
@@ -1488,7 +1505,7 @@
                 </div>
               </div>
 
-              <div class="box-title" style="margin-top:6px;">NOTE & SUMMARY</div>
+              <div class="box-title" style="margin-top:5px;">NOTE & SUMMARY</div>
               <div class="grid-note-area" style="flex:1;" contenteditable="true"></div>
             </div>
           </div>
@@ -1498,9 +1515,9 @@
       container.innerHTML = html;
     }
 
-    /* ====================================================================
-       5. 메모 노트 (코넬식, 오답노트, 그리드, 라인, 도트, 무지)
-       ==================================================================== */
+    /* =========================================================
+       5. 메모 노트 (오답정리노트 4번 셀: 무지 형태 적용)
+       ========================================================= */
     function renderNote(container) {
       let contentHtml = '';
 
@@ -1538,9 +1555,10 @@
               <div class="box-title">3. 바른 풀이 과정 (CORRECT SOLUTION)</div>
               <div style="flex:1;" contenteditable="true"></div>
             </div>
+            <!-- 4번 셀: 도트 제거 및 완전 무지 Blank 적용 -->
             <div class="wrong-card">
               <div class="box-title">4. 핵심 개념 & 행동 요령 (KEY CONCEPTS & RULES)</div>
-              <div style="flex:1; background-image:radial-gradient(#C5BFB5 1px, transparent 1px); background-size:5mm 5mm;" contenteditable="true"></div>
+              <div style="flex:1; background:#FFFFFF;" contenteditable="true"></div>
             </div>
           </div>
         `;
@@ -1549,12 +1567,12 @@
       }
 
       let html = `
-        <div class="sheet-header" style="margin-bottom:6px;">
+        <div class="sheet-header">
           <div class="sheet-title-group">
             <div class="sheet-title">ACADEMIC NOTE (${currentNotePattern.toUpperCase()})</div>
             <div class="sheet-sub">세일고등학교 자기주도 학습 및 개념 정리 노트</div>
           </div>
-          ${seilLogoSvg}
+          ${seilLogoHtml}
         </div>
         <div class="note-container">
           ${contentHtml}
@@ -1569,7 +1587,6 @@
       renderNote(document.getElementById('mainCanvas'));
     }
 
-    // 초기 화면 실행
     window.onload = function() {
       switchView('yearly');
     };
