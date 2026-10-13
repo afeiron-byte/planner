@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2027학년도 프리미엄 학습 플래너 &amp; 다이어리</title>
+  <!-- Google Fonts: Inter & Noto Sans KR -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Noto+Sans+KR:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --planner-bg: #FAF8F5;
+      --planner-card-bg: #FFFFFF;
+      --border-main: #E2DED6;
+      --border-light: #ECE8E0;
+      --text-main: #2C2A29;
+      --text-muted: #8E8880;
+      --text-sub: #5C5854;
+      --accent-coral: #E06D53;
+      --accent-sage: #6B8E7D;
+      --accent-gold: #C99A45;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      font-family: 'Inter', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #EFECE6;
+      color: var(--text-main);
+      margin: 0;
+      padding: 0;
+    }
+
+    /* A4 Landscape print rules (297mm x 210mm with 10mm margins) */
+    @page {
+      size: A4 landscape;
+      margin: 10mm;
+    }
+
+    @media print {
+      body {
+        background: transparent !important;
+        padding: 0 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .sheet-container {
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 277mm !important; /* 297mm - 20mm margin */
+        height: 190mm !important; /* 210mm - 20mm margin */
+        border: none !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      .page-tab-content {
+        display: none !important;
+      }
+      .page-tab-content.active {
+        display: flex !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
+    }
+
+    /* Screen preview canvas container representing exact A4 landscape inner area */
+    .sheet-container {
+      width: 277mm;
+      height: 190mm;
+      background-color: var(--planner-bg);
+      border: 1px solid var(--border-main);
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Right Index Tab Bar */
+    .index-bar {
+      width: 26mm;
+      min-width: 26mm;
+      border-left: 1px solid var(--border-main);
+      background-color: #F5F2EB;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 0;
+      user-select: none;
+    }
+
+    .index-tab-btn {
+      font-size: 8.5px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 3px 6px;
+      border-radius: 4px;
+      transition: all 0.15s ease;
+      text-align: center;
+      width: 85%;
+    }
+    .index-tab-btn:hover {
+      background-color: #EAE5DC;
+      color: var(--text-main);
+    }
+    .index-tab-btn.active {
+      color: var(--accent-coral);
+      font-weight: 700;
+      background-color: #FFFFFF;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .pattern-grid {
+      background-color: #FFFFFF;
+      background-image: 
+        linear-gradient(to right, rgba(226, 222, 214, 0.6) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(226, 222, 214, 0.6) 1px, transparent 1px);
+      background-size: 4mm 4mm;
+    }
+
+    .pattern-dot {
+      background-color: #FFFFFF;
+      background-image: radial-gradient(rgba(170, 163, 153, 0.7) 0.8px, transparent 0.8px);
+      background-size: 5mm 5mm;
+    }
+
+    .pattern-line {
+      background-color: #FFFFFF;
+      background-image: linear-gradient(to bottom, transparent calc(7mm - 1px), rgba(226, 222, 214, 0.8) calc(7mm - 1px));
+      background-size: 100% 7mm;
+    }
+
+    .pattern-blank {
+      background-color: #FFFFFF;
+    }
+
+    /* Editable inline elements */
+    [contenteditable="true"]:focus {
+      outline: 1.5px dashed var(--accent-sage);
+      outline-offset: 2px;
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Rounded planner boxes */
+    .planner-card {
+      background-color: #FFFFFF;
+      border: 1px solid var(--border-main);
+      border-radius: 8px;
+    }
+  </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.absolute{position:absolute}.relative{position:relative}.bottom-0{bottom:0px}.left-2{left:0.5rem}.right-2{right:0.5rem}.top-1{top:0.25rem}.top-1\.5{top:0.375rem}.mb-0\.5{margin-bottom:0.125rem}.mb-1{margin-bottom:0.25rem}.mb-1\.5{margin-bottom:0.375rem}.mb-2{margin-bottom:0.5rem}.mb-2\.5{margin-bottom:0.625rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.ml-2{margin-left:0.5rem}.mr-1\.5{margin-right:0.375rem}.mt-1{margin-top:0.25rem}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.contents{display:contents}.hidden{display:none}.h-2\.5{height:0.625rem}.h-3{height:0.75rem}.h-3\.5{height:0.875rem}.h-4{height:1rem}.h-7{height:1.75rem}.h-\[22\%\]{height:22%}.h-\[34\%\]{height:34%}.h-\[42\%\]{height:42%}.h-\[45\%\]{height:45%}.h-\[48\%\]{height:48%}.h-full{height:100%}.min-h-screen{min-height:100vh}.w-2\.5{width:0.625rem}.w-3{width:0.75rem}.w-3\.5{width:0.875rem}.w-4{width:1rem}.w-7{width:1.75rem}.w-8{width:2rem}.w-\[42\%\]{width:42%}.w-\[54mm\]{width:54mm}.w-\[66mm\]{width:66mm}.w-\[68mm\]{width:68mm}.w-full{width:100%}.max-w-\[277mm\]{max-width:277mm}.max-w-\[48px\]{max-width:48px}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;user-select:none}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.grid-cols-7{grid-template-columns:repeat(7, minmax(0, 1fr))}.grid-rows-2{grid-template-rows:repeat(2, minmax(0, 1fr))}.grid-rows-3{grid-template-rows:repeat(3, minmax(0, 1fr))}.grid-rows-5{grid-template-rows:repeat(5, minmax(0, 1fr))}.grid-rows-\[repeat\(23\2c minmax\(0\2c 1fr\)\)\]{grid-template-rows:repeat(23,minmax(0,1fr))}.flex-row{flex-direction:row}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-end{align-items:flex-end}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-0\.5{gap:0.125rem}.gap-1{gap:0.25rem}.gap-2{gap:0.5rem}.gap-2\.5{gap:0.625rem}.gap-3{gap:0.75rem}.gap-px{gap:1px}.gap-x-1\.5{column-gap:0.375rem}.gap-y-0\.5{row-gap:0.125rem}.gap-x-0\.5{column-gap:0.125rem}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-1\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.375rem * var(--tw-space-x-reverse));margin-left:calc(0.375rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-1\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.375rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.375rem * var(--tw-space-y-reverse))}.divide-y > :not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.divide-stone-100 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(245 245 244 / var(--tw-divide-opacity, 1))}.overflow-hidden{overflow:hidden}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-\[\#E2DED6\]{--tw-border-opacity:1;border-color:rgb(226 222 214 / var(--tw-border-opacity, 1))}.border-rose-300{--tw-border-opacity:1;border-color:rgb(253 164 175 / var(--tw-border-opacity, 1))}.border-stone-100{--tw-border-opacity:1;border-color:rgb(245 245 244 / var(--tw-border-opacity, 1))}.border-stone-200{--tw-border-opacity:1;border-color:rgb(231 229 228 / var(--tw-border-opacity, 1))}.border-stone-300{--tw-border-opacity:1;border-color:rgb(214 211 209 / var(--tw-border-opacity, 1))}.bg-\[\#2C2A29\]{--tw-bg-opacity:1;background-color:rgb(44 42 41 / var(--tw-bg-opacity, 1))}.bg-\[\#E2DED6\]{--tw-bg-opacity:1;background-color:rgb(226 222 214 / var(--tw-bg-opacity, 1))}.bg-amber-100{--tw-bg-opacity:1;background-color:rgb(254 243 199 / var(--tw-bg-opacity, 1))}.bg-amber-50\/50{background-color:rgb(255 251 235 / 0.5)}.bg-stone-100{--tw-bg-opacity:1;background-color:rgb(245 245 244 / var(--tw-bg-opacity, 1))}.bg-stone-200\/50{background-color:rgb(231 229 228 / 0.5)}.bg-stone-200\/60{background-color:rgb(231 229 228 / 0.6)}.bg-stone-200\/80{background-color:rgb(231 229 228 / 0.8)}.bg-stone-50{--tw-bg-opacity:1;background-color:rgb(250 250 249 / var(--tw-bg-opacity, 1))}.bg-stone-50\/50{background-color:rgb(250 250 249 / 0.5)}.bg-stone-500{--tw-bg-opacity:1;background-color:rgb(120 113 108 / var(--tw-bg-opacity, 1))}.bg-stone-700{--tw-bg-opacity:1;background-color:rgb(68 64 60 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/60{background-color:rgb(255 255 255 / 0.6)}.p-0\.5{padding:0.125rem}.p-1{padding:0.25rem}.p-2{padding:0.5rem}.p-2\.5{padding:0.625rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.px-1{padding-left:0.25rem;padding-right:0.25rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pb-0\.5{padding-bottom:0.125rem}.pb-1{padding-bottom:0.25rem}.pb-1\.5{padding-bottom:0.375rem}.pb-2{padding-bottom:0.5rem}.pl-2{padding-left:0.5rem}.pr-3{padding-right:0.75rem}.pt-1{padding-top:0.25rem}.pt-4{padding-top:1rem}.pt-0\.5{padding-top:0.125rem}.text-center{text-align:center}.font-serif{font-family:ui-serif, Georgia, Cambria, "Times New Roman", Times, serif}.text-2xl{font-size:1.5rem;line-height:2rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-\[10\.5px\]{font-size:10.5px}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[8\.5px\]{font-size:8.5px}.text-\[8px\]{font-size:8px}.text-\[9\.5px\]{font-size:9.5px}.text-\[9px\]{font-size:9px}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.text-\[7\.5px\]{font-size:7.5px}.font-bold{font-weight:700}.font-light{font-weight:300}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-relaxed{line-height:1.625}.tracking-tight{letter-spacing:-0.025em}.tracking-wide{letter-spacing:0.025em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-\[\#2C2A29\]{--tw-text-opacity:1;color:rgb(44 42 41 / var(--tw-text-opacity, 1))}.text-amber-100{--tw-text-opacity:1;color:rgb(254 243 199 / var(--tw-text-opacity, 1))}.text-amber-500{--tw-text-opacity:1;color:rgb(245 158 11 / var(--tw-text-opacity, 1))}.text-amber-700{--tw-text-opacity:1;color:rgb(180 83 9 / var(--tw-text-opacity, 1))}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14 / var(--tw-text-opacity, 1))}.text-neutral-800{--tw-text-opacity:1;color:rgb(38 38 38 / var(--tw-text-opacity, 1))}.text-rose-500{--tw-text-opacity:1;color:rgb(244 63 94 / var(--tw-text-opacity, 1))}.text-rose-600{--tw-text-opacity:1;color:rgb(225 29 72 / var(--tw-text-opacity, 1))}.text-sky-600{--tw-text-opacity:1;color:rgb(2 132 199 / var(--tw-text-opacity, 1))}.text-stone-300{--tw-text-opacity:1;color:rgb(214 211 209 / var(--tw-text-opacity, 1))}.text-stone-400{--tw-text-opacity:1;color:rgb(168 162 158 / var(--tw-text-opacity, 1))}.text-stone-500{--tw-text-opacity:1;color:rgb(120 113 108 / var(--tw-text-opacity, 1))}.text-stone-600{--tw-text-opacity:1;color:rgb(87 83 78 / var(--tw-text-opacity, 1))}.text-stone-700{--tw-text-opacity:1;color:rgb(68 64 60 / var(--tw-text-opacity, 1))}.text-stone-800{--tw-text-opacity:1;color:rgb(41 37 36 / var(--tw-text-opacity, 1))}.text-stone-900{--tw-text-opacity:1;color:rgb(28 25 23 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.opacity-40{opacity:0.4}.opacity-60{opacity:0.6}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.outline-none{outline:2px solid transparent;outline-offset:2px}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:scale-110:hover{--tw-scale-x:1.1;--tw-scale-y:1.1;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:scale-125:hover{--tw-scale-x:1.25;--tw-scale-y:1.25;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:bg-amber-50:hover{--tw-bg-opacity:1;background-color:rgb(255 251 235 / var(--tw-bg-opacity, 1))}.hover\:bg-black:hover{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.hover\:bg-stone-200:hover{--tw-bg-opacity:1;background-color:rgb(231 229 228 / var(--tw-bg-opacity, 1))}.hover\:bg-stone-300:hover{--tw-bg-opacity:1;background-color:rgb(214 211 209 / var(--tw-bg-opacity, 1))}.hover\:bg-white:hover{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.hover\:text-stone-900:hover{--tw-text-opacity:1;color:rgb(28 25 23 / var(--tw-text-opacity, 1))}.hover\:opacity-100:hover{opacity:1}</style></head>
+<body class="min-h-screen flex flex-col items-center py-6">
+
+  <header class="no-print w-full max-w-[277mm] mb-4 flex flex-wrap items-center justify-between gap-3 px-2">
+    <div class="flex items-center space-x-2">
+      <span class="inline-flex items-center justify-center w-7 h-7 bg-[#2C2A29] text-amber-100 rounded-md text-xs font-bold">27</span>
+      <h1 class="text-lg font-bold text-neutral-800 tracking-tight">2027 스터디 플래너 &amp; 다이어리</h1>
+      <span class="text-xs px-2 py-0.5 bg-amber-100 text-amber-800 rounded font-medium ml-2">A4 가로 1페이지 인쇄용</span>
+    </div>
+
+    <!-- Tab switcher buttons -->
+    <div class="flex items-center bg-stone-200/80 p-1 rounded-lg border border-stone-300">
+      <button onclick="switchTab('yearly')" id="nav-yearly" class="nav-btn px-3 py-1.5 text-xs font-semibold rounded-md hover:text-stone-900 transition bg-white text-stone-900 shadow-sm active">연간 플래너</button>
+      <button onclick="switchTab('monthly')" id="nav-monthly" class="nav-btn px-3 py-1.5 text-xs font-semibold rounded-md transition text-stone-700">월간 플래너</button>
+      <button onclick="switchTab('weekly')" id="nav-weekly" class="nav-btn px-3 py-1.5 text-xs font-semibold rounded-md hover:text-stone-900 transition text-stone-700">주간 플래너</button>
+      <button onclick="switchTab('daily')" id="nav-daily" class="nav-btn px-3 py-1.5 text-xs font-semibold rounded-md hover:text-stone-900 transition text-stone-700">일간 플래너</button>
+      <button onclick="switchTab('note')" id="nav-note" class="nav-btn px-3 py-1.5 text-xs font-semibold rounded-md hover:text-stone-900 transition text-stone-700">메모 노트</button>
+    </div>
+
+    <!-- Print Action -->
+    <button onclick="window.print()" class="inline-flex items-center px-4 py-2 bg-[#2C2A29] hover:bg-black text-white text-xs font-semibold rounded-lg shadow transition">
+      <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+      </svg>
+      현재 페이지 인쇄 (Print)
+    </button>
+  </header>
+
+  <main class="sheet-container">
+
+    <!-- ========================================================
+         TAB 1: YEARLY PLANNER (연간 플래너 - 4 columns x 3 rows)
+    ======================================================== -->
+    <div id="tab-yearly" class="page-tab-content w-full h-full flex flex-row active">
+      <div class="flex-1 flex flex-col p-4 pr-3 overflow-hidden">
+        <!-- Header -->
+        <div class="flex items-end justify-between border-b border-[#E2DED6] pb-2 mb-2">
+          <div>
+            <div class="text-2xl font-bold tracking-tight text-[#2C2A29]">2027 <span class="text-sm font-normal text-stone-500">ACADEMIC YEARLY OVERVIEW</span></div>
+            <div class="text-[10px] text-stone-400">2027.01.01 ~ 2027.12.31 연간 학사 일정 &amp; 목표 로드맵</div>
+          </div>
+          <div class="flex items-center space-x-4 text-xs text-stone-600">
+            <span class="font-medium" contenteditable="true">목표: 2027 대입 및 학업 계획 수립</span>
+            <span class="text-stone-300">|</span>
+            <span class="text-[11px] text-stone-400">D-DAY / KEY MILESTONES</span>
+          </div>
+        </div>
+
+        <!-- 4x3 12 Months Grid -->
+        <div class="grid grid-cols-4 grid-rows-3 gap-2 flex-1 text-[9.5px]">
+          <!-- Month items will be generated by JavaScript for 2027 -->
+          <div id="yearly-grid" class="contents"><div class="planner-card p-2 flex flex-col justify-between">
+          <div class="flex justify-between items-center border-b border-stone-200 pb-0.5 mb-1">
+            <span class="font-bold text-[10px] text-stone-700 tracking-wider">01 JANUARY</span>
+            <span class="text-[7.5px] text-stone-400 cursor-pointer" onclick="switchTab('monthly')">GO</span>
+          </div>
+          <div class="grid grid-cols-7 gap-x-0.5 gap-y-0.5 text-center text-[7.5px] mb-1">
+            <span class="text-rose-500 font-bold">S</span>
+            <span class="text-stone-500 font-bold">M</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">W</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">F</span>
+            <span class="text-sky-600 font-bold">S</span>
+            <span></span><span></span><span></span><span></span><span></span><span class="text-stone-700">1</span><span class="text-sky-600 font-semibold">2</span><span class="text-rose-500 font-semibold">3</span><span class="text-stone-700">4</span><span class="text-stone-700">5</span><span class="text-stone-700">6</span><span class="text-stone-700">7</span><span class="text-stone-700">8</span><span class="text-sky-600 font-semibold">9</span><span class="text-rose-500 font-semibold">10</span><span class="text-stone-700">11</span><span class="text-stone-700">12</span><span class="text-stone-700">13</span><span class="text-stone-700">14</span><span class="text-stone-700">15</span><span class="text-sky-600 font-semibold">16</span><span class="text-rose-500 font-semibold">17</span><span class="text-stone-700">18</span><span class="text-stone-700">19</span><span class="text-stone-700">20</span><span class="text-stone-700">21</span><span class="text-stone-700">22</span><span class="text-sky-600 font-semibold">23</span><span class="text-rose-500 font-semibold">24</span><span class="text-stone-700">25</span><span class="text-stone-700">26</span><span class="text-stone-700">27</span><span class="text-stone-700">28</span><span class="text-stone-700">29</span><span class="text-sky-600 font-semibold">30</span><span class="text-rose-500 font-semibold">31</span>
+          </div>
+          <div class="border-t border-dashed border-stone-200 pt-0.5 text-[8px] text-stone-400 outline-none truncate" contenteditable="true"><br></div>
+        </div><div class="planner-card p-2 flex flex-col justify-between">
+          <div class="flex justify-between items-center border-b border-stone-200 pb-0.5 mb-1">
+            <span class="font-bold text-[10px] text-stone-700 tracking-wider">02 FEBRUARY</span>
+            <span class="text-[7.5px] text-stone-400 cursor-pointer" onclick="switchTab('monthly')">GO</span>
+          </div>
+          <div class="grid grid-cols-7 gap-x-0.5 gap-y-0.5 text-center text-[7.5px] mb-1">
+            <span class="text-rose-500 font-bold">S</span>
+            <span class="text-stone-500 font-bold">M</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">W</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">F</span>
+            <span class="text-sky-600 font-bold">S</span>
+            <span></span><span class="text-stone-700">1</span><span class="text-stone-700">2</span><span class="text-stone-700">3</span><span class="text-stone-700">4</span><span class="text-stone-700">5</span><span class="text-sky-600 font-semibold">6</span><span class="text-rose-500 font-semibold">7</span><span class="text-stone-700">8</span><span class="text-stone-700">9</span><span class="text-stone-700">10</span><span class="text-stone-700">11</span><span class="text-stone-700">12</span><span class="text-sky-600 font-semibold">13</span><span class="text-rose-500 font-semibold">14</span><span class="text-stone-700">15</span><span class="text-stone-700">16</span><span class="text-stone-700">17</span><span class="text-stone-700">18</span><span class="text-stone-700">19</span><span class="text-sky-600 font-semibold">20</span><span class="text-rose-500 font-semibold">21</span><span class="text-stone-700">22</span><span class="text-stone-700">23</span><span class="text-stone-700">24</span><span class="text-stone-700">25</span><span class="text-stone-700">26</span><span class="text-sky-600 font-semibold">27</span><span class="text-rose-500 font-semibold">28</span>
+          </div>
+          <div class="border-t border-dashed border-stone-200 pt-0.5 text-[8px] text-stone-400 outline-none truncate" contenteditable="true"><br></div>
+        </div><div class="planner-card p-2 flex flex-col justify-between">
+          <div class="flex justify-between items-center border-b border-stone-200 pb-0.5 mb-1">
+            <span class="font-bold text-[10px] text-stone-700 tracking-wider">03 MARCH</span>
+            <span class="text-[7.5px] text-stone-400 cursor-pointer" onclick="switchTab('monthly')">GO</span>
+          </div>
+          <div class="grid grid-cols-7 gap-x-0.5 gap-y-0.5 text-center text-[7.5px] mb-1">
+            <span class="text-rose-500 font-bold">S</span>
+            <span class="text-stone-500 font-bold">M</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">W</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">F</span>
+            <span class="text-sky-600 font-bold">S</span>
+            <span></span><span class="text-stone-700">1</span><span class="text-stone-700">2</span><span class="text-stone-700">3</span><span class="text-stone-700">4</span><span class="text-stone-700">5</span><span class="text-sky-600 font-semibold">6</span><span class="text-rose-500 font-semibold">7</span><span class="text-stone-700">8</span><span class="text-stone-700">9</span><span class="text-stone-700">10</span><span class="text-stone-700">11</span><span class="text-stone-700">12</span><span class="text-sky-600 font-semibold">13</span><span class="text-rose-500 font-semibold">14</span><span class="text-stone-700">15</span><span class="text-stone-700">16</span><span class="text-stone-700">17</span><span class="text-stone-700">18</span><span class="text-stone-700">19</span><span class="text-sky-600 font-semibold">20</span><span class="text-rose-500 font-semibold">21</span><span class="text-stone-700">22</span><span class="text-stone-700">23</span><span class="text-stone-700">24</span><span class="text-stone-700">25</span><span class="text-stone-700">26</span><span class="text-sky-600 font-semibold">27</span><span class="text-rose-500 font-semibold">28</span><span class="text-stone-700">29</span><span class="text-stone-700">30</span><span class="text-stone-700">31</span>
+          </div>
+          <div class="border-t border-dashed border-stone-200 pt-0.5 text-[8px] text-stone-400 outline-none truncate" contenteditable="true"><br></div>
+        </div><div class="planner-card p-2 flex flex-col justify-between">
+          <div class="flex justify-between items-center border-b border-stone-200 pb-0.5 mb-1">
+            <span class="font-bold text-[10px] text-stone-700 tracking-wider">04 APRIL</span>
+            <span class="text-[7.5px] text-stone-400 cursor-pointer" onclick="switchTab('monthly')">GO</span>
+          </div>
+          <div class="grid grid-cols-7 gap-x-0.5 gap-y-0.5 text-center text-[7.5px] mb-1">
+            <span class="text-rose-500 font-bold">S</span>
+            <span class="text-stone-500 font-bold">M</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">W</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">F</span>
+            <span class="text-sky-600 font-bold">S</span>
+            <span></span><span></span><span></span><span></span><span class="text-stone-700">1</span><span class="text-stone-700">2</span><span class="text-sky-600 font-semibold">3</span><span class="text-rose-500 font-semibold">4</span><span class="text-stone-700">5</span><span class="text-stone-700">6</span><span class="text-stone-700">7</span><span class="text-stone-700">8</span><span class="text-stone-700">9</span><span class="text-sky-600 font-semibold">10</span><span class="text-rose-500 font-semibold">11</span><span class="text-stone-700">12</span><span class="text-stone-700">13</span><span class="text-stone-700">14</span><span class="text-stone-700">15</span><span class="text-stone-700">16</span><span class="text-sky-600 font-semibold">17</span><span class="text-rose-500 font-semibold">18</span><span class="text-stone-700">19</span><span class="text-stone-700">20</span><span class="text-stone-700">21</span><span class="text-stone-700">22</span><span class="text-stone-700">23</span><span class="text-sky-600 font-semibold">24</span><span class="text-rose-500 font-semibold">25</span><span class="text-stone-700">26</span><span class="text-stone-700">27</span><span class="text-stone-700">28</span><span class="text-stone-700">29</span><span class="text-stone-700">30</span>
+          </div>
+          <div class="border-t border-dashed border-stone-200 pt-0.5 text-[8px] text-stone-400 outline-none truncate" contenteditable="true"><br></div>
+        </div><div class="planner-card p-2 flex flex-col justify-between">
+          <div class="flex justify-between items-center border-b border-stone-200 pb-0.5 mb-1">
+            <span class="font-bold text-[10px] text-stone-700 tracking-wider">05 MAY</span>
+            <span class="text-[7.5px] text-stone-400 cursor-pointer" onclick="switchTab('monthly')">GO</span>
+          </div>
+          <div class="grid grid-cols-7 gap-x-0.5 gap-y-0.5 text-center text-[7.5px] mb-1">
+            <span class="text-rose-500 font-bold">S</span>
+            <span class="text-stone-500 font-bold">M</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">W</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">F</span>
+            <span class="text-sky-600 font-bold">S</span>
+            <span></span><span></span><span></span><span></span><span></span><span></span><span class="text-sky-600 font-semibold">1</span><span class="text-rose-500 font-semibold">2</span><span class="text-stone-700">3</span><span class="text-stone-700">4</span><span class="text-stone-700">5</span><span class="text-stone-700">6</span><span class="text-stone-700">7</span><span class="text-sky-600 font-semibold">8</span><span class="text-rose-500 font-semibold">9</span><span class="text-stone-700">10</span><span class="text-stone-700">11</span><span class="text-stone-700">12</span><span class="text-stone-700">13</span><span class="text-stone-700">14</span><span class="text-sky-600 font-semibold">15</span><span class="text-rose-500 font-semibold">16</span><span class="text-stone-700">17</span><span class="text-stone-700">18</span><span class="text-stone-700">19</span><span class="text-stone-700">20</span><span class="text-stone-700">21</span><span class="text-sky-600 font-semibold">22</span><span class="text-rose-500 font-semibold">23</span><span class="text-stone-700">24</span><span class="text-stone-700">25</span><span class="text-stone-700">26</span><span class="text-stone-700">27</span><span class="text-stone-700">28</span><span class="text-sky-600 font-semibold">29</span><span class="text-rose-500 font-semibold">30</span><span class="text-stone-700">31</span>
+          </div>
+          <div class="border-t border-dashed border-stone-200 pt-0.5 text-[8px] text-stone-400 outline-none truncate" contenteditable="true"><br></div>
+        </div><div class="planner-card p-2 flex flex-col justify-between">
+          <div class="flex justify-between items-center border-b border-stone-200 pb-0.5 mb-1">
+            <span class="font-bold text-[10px] text-stone-700 tracking-wider">06 JUNE</span>
+            <span class="text-[7.5px] text-stone-400 cursor-pointer" onclick="switchTab('monthly')">GO</span>
+          </div>
+          <div class="grid grid-cols-7 gap-x-0.5 gap-y-0.5 text-center text-[7.5px] mb-1">
+            <span class="text-rose-500 font-bold">S</span>
+            <span class="text-stone-500 font-bold">M</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">W</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">F</span>
+            <span class="text-sky-600 font-bold">S</span>
+            <span></span><span></span><span class="text-stone-700">1</span><span class="text-stone-700">2</span><span class="text-stone-700">3</span><span class="text-stone-700">4</span><span class="text-sky-600 font-semibold">5</span><span class="text-rose-500 font-semibold">6</span><span class="text-stone-700">7</span><span class="text-stone-700">8</span><span class="text-stone-700">9</span><span class="text-stone-700">10</span><span class="text-stone-700">11</span><span class="text-sky-600 font-semibold">12</span><span class="text-rose-500 font-semibold">13</span><span class="text-stone-700">14</span><span class="text-stone-700">15</span><span class="text-stone-700">16</span><span class="text-stone-700">17</span><span class="text-stone-700">18</span><span class="text-sky-600 font-semibold">19</span><span class="text-rose-500 font-semibold">20</span><span class="text-stone-700">21</span><span class="text-stone-700">22</span><span class="text-stone-700">23</span><span class="text-stone-700">24</span><span class="text-stone-700">25</span><span class="text-sky-600 font-semibold">26</span><span class="text-rose-500 font-semibold">27</span><span class="text-stone-700">28</span><span class="text-stone-700">29</span><span class="text-stone-700">30</span>
+          </div>
+          <div class="border-t border-dashed border-stone-200 pt-0.5 text-[8px] text-stone-400 outline-none truncate" contenteditable="true"><br></div>
+        </div><div class="planner-card p-2 flex flex-col justify-between">
+          <div class="flex justify-between items-center border-b border-stone-200 pb-0.5 mb-1">
+            <span class="font-bold text-[10px] text-stone-700 tracking-wider">07 JULY</span>
+            <span class="text-[7.5px] text-stone-400 cursor-pointer" onclick="switchTab('monthly')">GO</span>
+          </div>
+          <div class="grid grid-cols-7 gap-x-0.5 gap-y-0.5 text-center text-[7.5px] mb-1">
+            <span class="text-rose-500 font-bold">S</span>
+            <span class="text-stone-500 font-bold">M</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">W</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">F</span>
+            <span class="text-sky-600 font-bold">S</span>
+            <span></span><span></span><span></span><span></span><span class="text-stone-700">1</span><span class="text-stone-700">2</span><span class="text-sky-600 font-semibold">3</span><span class="text-rose-500 font-semibold">4</span><span class="text-stone-700">5</span><span class="text-stone-700">6</span><span class="text-stone-700">7</span><span class="text-stone-700">8</span><span class="text-stone-700">9</span><span class="text-sky-600 font-semibold">10</span><span class="text-rose-500 font-semibold">11</span><span class="text-stone-700">12</span><span class="text-stone-700">13</span><span class="text-stone-700">14</span><span class="text-stone-700">15</span><span class="text-stone-700">16</span><span class="text-sky-600 font-semibold">17</span><span class="text-rose-500 font-semibold">18</span><span class="text-stone-700">19</span><span class="text-stone-700">20</span><span class="text-stone-700">21</span><span class="text-stone-700">22</span><span class="text-stone-700">23</span><span class="text-sky-600 font-semibold">24</span><span class="text-rose-500 font-semibold">25</span><span class="text-stone-700">26</span><span class="text-stone-700">27</span><span class="text-stone-700">28</span><span class="text-stone-700">29</span><span class="text-stone-700">30</span><span class="text-sky-600 font-semibold">31</span>
+          </div>
+          <div class="border-t border-dashed border-stone-200 pt-0.5 text-[8px] text-stone-400 outline-none truncate" contenteditable="true"><br></div>
+        </div><div class="planner-card p-2 flex flex-col justify-between">
+          <div class="flex justify-between items-center border-b border-stone-200 pb-0.5 mb-1">
+            <span class="font-bold text-[10px] text-stone-700 tracking-wider">08 AUGUST</span>
+            <span class="text-[7.5px] text-stone-400 cursor-pointer" onclick="switchTab('monthly')">GO</span>
+          </div>
+          <div class="grid grid-cols-7 gap-x-0.5 gap-y-0.5 text-center text-[7.5px] mb-1">
+            <span class="text-rose-500 font-bold">S</span>
+            <span class="text-stone-500 font-bold">M</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">W</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">F</span>
+            <span class="text-sky-600 font-bold">S</span>
+            <span class="text-rose-500 font-semibold">1</span><span class="text-stone-700">2</span><span class="text-stone-700">3</span><span class="text-stone-700">4</span><span class="text-stone-700">5</span><span class="text-stone-700">6</span><span class="text-sky-600 font-semibold">7</span><span class="text-rose-500 font-semibold">8</span><span class="text-stone-700">9</span><span class="text-stone-700">10</span><span class="text-stone-700">11</span><span class="text-stone-700">12</span><span class="text-stone-700">13</span><span class="text-sky-600 font-semibold">14</span><span class="text-rose-500 font-semibold">15</span><span class="text-stone-700">16</span><span class="text-stone-700">17</span><span class="text-stone-700">18</span><span class="text-stone-700">19</span><span class="text-stone-700">20</span><span class="text-sky-600 font-semibold">21</span><span class="text-rose-500 font-semibold">22</span><span class="text-stone-700">23</span><span class="text-stone-700">24</span><span class="text-stone-700">25</span><span class="text-stone-700">26</span><span class="text-stone-700">27</span><span class="text-sky-600 font-semibold">28</span><span class="text-rose-500 font-semibold">29</span><span class="text-stone-700">30</span><span class="text-stone-700">31</span>
+          </div>
+          <div class="border-t border-dashed border-stone-200 pt-0.5 text-[8px] text-stone-400 outline-none truncate" contenteditable="true"><br></div>
+        </div><div class="planner-card p-2 flex flex-col justify-between">
+          <div class="flex justify-between items-center border-b border-stone-200 pb-0.5 mb-1">
+            <span class="font-bold text-[10px] text-stone-700 tracking-wider">09 SEPTEMBER</span>
+            <span class="text-[7.5px] text-stone-400 cursor-pointer" onclick="switchTab('monthly')">GO</span>
+          </div>
+          <div class="grid grid-cols-7 gap-x-0.5 gap-y-0.5 text-center text-[7.5px] mb-1">
+            <span class="text-rose-500 font-bold">S</span>
+            <span class="text-stone-500 font-bold">M</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">W</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">F</span>
+            <span class="text-sky-600 font-bold">S</span>
+            <span></span><span></span><span></span><span class="text-stone-700">1</span><span class="text-stone-700">2</span><span class="text-stone-700">3</span><span class="text-sky-600 font-semibold">4</span><span class="text-rose-500 font-semibold">5</span><span class="text-stone-700">6</span><span class="text-stone-700">7</span><span class="text-stone-700">8</span><span class="text-stone-700">9</span><span class="text-stone-700">10</span><span class="text-sky-600 font-semibold">11</span><span class="text-rose-500 font-semibold">12</span><span class="text-stone-700">13</span><span class="text-stone-700">14</span><span class="text-stone-700">15</span><span class="text-stone-700">16</span><span class="text-stone-700">17</span><span class="text-sky-600 font-semibold">18</span><span class="text-rose-500 font-semibold">19</span><span class="text-stone-700">20</span><span class="text-stone-700">21</span><span class="text-stone-700">22</span><span class="text-stone-700">23</span><span class="text-stone-700">24</span><span class="text-sky-600 font-semibold">25</span><span class="text-rose-500 font-semibold">26</span><span class="text-stone-700">27</span><span class="text-stone-700">28</span><span class="text-stone-700">29</span><span class="text-stone-700">30</span>
+          </div>
+          <div class="border-t border-dashed border-stone-200 pt-0.5 text-[8px] text-stone-400 outline-none truncate" contenteditable="true">
+            주요 학사 일정 및 모의고사 기록
+          </div>
+        </div><div class="planner-card p-2 flex flex-col justify-between">
+          <div class="flex justify-between items-center border-b border-stone-200 pb-0.5 mb-1">
+            <span class="font-bold text-[10px] text-stone-700 tracking-wider">10 OCTOBER</span>
+            <span class="text-[7.5px] text-stone-400 cursor-pointer" onclick="switchTab('monthly')">GO</span>
+          </div>
+          <div class="grid grid-cols-7 gap-x-0.5 gap-y-0.5 text-center text-[7.5px] mb-1">
+            <span class="text-rose-500 font-bold">S</span>
+            <span class="text-stone-500 font-bold">M</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">W</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">F</span>
+            <span class="text-sky-600 font-bold">S</span>
+            <span></span><span></span><span></span><span></span><span></span><span class="text-stone-700">1</span><span class="text-sky-600 font-semibold">2</span><span class="text-rose-500 font-semibold">3</span><span class="text-stone-700">4</span><span class="text-stone-700">5</span><span class="text-stone-700">6</span><span class="text-stone-700">7</span><span class="text-stone-700">8</span><span class="text-sky-600 font-semibold">9</span><span class="text-rose-500 font-semibold">10</span><span class="text-stone-700">11</span><span class="text-stone-700">12</span><span class="text-stone-700">13</span><span class="text-stone-700">14</span><span class="text-stone-700">15</span><span class="text-sky-600 font-semibold">16</span><span class="text-rose-500 font-semibold">17</span><span class="text-stone-700">18</span><span class="text-stone-700">19</span><span class="text-stone-700">20</span><span class="text-stone-700">21</span><span class="text-stone-700">22</span><span class="text-sky-600 font-semibold">23</span><span class="text-rose-500 font-semibold">24</span><span class="text-stone-700">25</span><span class="text-stone-700">26</span><span class="text-stone-700">27</span><span class="text-stone-700">28</span><span class="text-stone-700">29</span><span class="text-sky-600 font-semibold">30</span><span class="text-rose-500 font-semibold">31</span>
+          </div>
+          <div class="border-t border-dashed border-stone-200 pt-0.5 text-[8px] text-stone-400 outline-none truncate" contenteditable="true">
+            주요 학사 일정 및 모의고사 기록
+          </div>
+        </div><div class="planner-card p-2 flex flex-col justify-between">
+          <div class="flex justify-between items-center border-b border-stone-200 pb-0.5 mb-1">
+            <span class="font-bold text-[10px] text-stone-700 tracking-wider">11 NOVEMBER</span>
+            <span class="text-[7.5px] text-stone-400 cursor-pointer" onclick="switchTab('monthly')">GO</span>
+          </div>
+          <div class="grid grid-cols-7 gap-x-0.5 gap-y-0.5 text-center text-[7.5px] mb-1">
+            <span class="text-rose-500 font-bold">S</span>
+            <span class="text-stone-500 font-bold">M</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">W</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">F</span>
+            <span class="text-sky-600 font-bold">S</span>
+            <span></span><span class="text-stone-700">1</span><span class="text-stone-700">2</span><span class="text-stone-700">3</span><span class="text-stone-700">4</span><span class="text-stone-700">5</span><span class="text-sky-600 font-semibold">6</span><span class="text-rose-500 font-semibold">7</span><span class="text-stone-700">8</span><span class="text-stone-700">9</span><span class="text-stone-700">10</span><span class="text-stone-700">11</span><span class="text-stone-700">12</span><span class="text-sky-600 font-semibold">13</span><span class="text-rose-500 font-semibold">14</span><span class="text-stone-700">15</span><span class="text-stone-700">16</span><span class="text-stone-700">17</span><span class="text-stone-700">18</span><span class="text-stone-700">19</span><span class="text-sky-600 font-semibold">20</span><span class="text-rose-500 font-semibold">21</span><span class="text-stone-700">22</span><span class="text-stone-700">23</span><span class="text-stone-700">24</span><span class="text-stone-700">25</span><span class="text-stone-700">26</span><span class="text-sky-600 font-semibold">27</span><span class="text-rose-500 font-semibold">28</span><span class="text-stone-700">29</span><span class="text-stone-700">30</span>
+          </div>
+          <div class="border-t border-dashed border-stone-200 pt-0.5 text-[8px] text-stone-400 outline-none truncate" contenteditable="true">
+            주요 학사 일정 및 모의고사 기록
+          </div>
+        </div><div class="planner-card p-2 flex flex-col justify-between">
+          <div class="flex justify-between items-center border-b border-stone-200 pb-0.5 mb-1">
+            <span class="font-bold text-[10px] text-stone-700 tracking-wider">12 DECEMBER</span>
+            <span class="text-[7.5px] text-stone-400 cursor-pointer" onclick="switchTab('monthly')">GO</span>
+          </div>
+          <div class="grid grid-cols-7 gap-x-0.5 gap-y-0.5 text-center text-[7.5px] mb-1">
+            <span class="text-rose-500 font-bold">S</span>
+            <span class="text-stone-500 font-bold">M</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">W</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">F</span>
+            <span class="text-sky-600 font-bold">S</span>
+            <span></span><span></span><span></span><span class="text-stone-700">1</span><span class="text-stone-700">2</span><span class="text-stone-700">3</span><span class="text-sky-600 font-semibold">4</span><span class="text-rose-500 font-semibold">5</span><span class="text-stone-700">6</span><span class="text-stone-700">7</span><span class="text-stone-700">8</span><span class="text-stone-700">9</span><span class="text-stone-700">10</span><span class="text-sky-600 font-semibold">11</span><span class="text-rose-500 font-semibold">12</span><span class="text-stone-700">13</span><span class="text-stone-700">14</span><span class="text-stone-700">15</span><span class="text-stone-700">16</span><span class="text-stone-700">17</span><span class="text-sky-600 font-semibold">18</span><span class="text-rose-500 font-semibold">19</span><span class="text-stone-700">20</span><span class="text-stone-700">21</span><span class="text-stone-700">22</span><span class="text-stone-700">23</span><span class="text-stone-700">24</span><span class="text-sky-600 font-semibold">25</span><span class="text-rose-500 font-semibold">26</span><span class="text-stone-700">27</span><span class="text-stone-700">28</span><span class="text-stone-700">29</span><span class="text-stone-700">30</span><span class="text-stone-700">31</span>
+          </div>
+          <div class="border-t border-dashed border-stone-200 pt-0.5 text-[8px] text-stone-400 outline-none truncate" contenteditable="true">
+            주요 학사 일정 및 모의고사 기록
+          </div>
+        </div></div>
+        </div>
+      </div>
+
+      <!-- Right Index Bar -->
+      <aside class="index-bar">
+        <div class="w-4 h-4 grid grid-cols-2 gap-0.5 opacity-60">
+          <div class="bg-stone-500 rounded-xs"></div><div class="bg-stone-500 rounded-xs"></div>
+          <div class="bg-stone-500 rounded-xs"></div><div class="bg-stone-500 rounded-xs"></div>
+        </div>
+        <div class="flex flex-col space-y-1 w-full items-center">
+          <div class="index-tab-btn active">YEAR</div>
+          <div class="index-tab-btn" onclick="switchTab('monthly')">JAN</div>
+          <div class="index-tab-btn" onclick="switchTab('monthly')">FEB</div>
+          <div class="index-tab-btn" onclick="switchTab('monthly')">MAR</div>
+          <div class="index-tab-btn" onclick="switchTab('monthly')">APR</div>
+          <div class="index-tab-btn" onclick="switchTab('monthly')">MAY</div>
+          <div class="index-tab-btn" onclick="switchTab('monthly')">JUN</div>
+          <div class="index-tab-btn" onclick="switchTab('monthly')">JUL</div>
+          <div class="index-tab-btn" onclick="switchTab('monthly')">AUG</div>
+          <div class="index-tab-btn" onclick="switchTab('monthly')">SEP</div>
+          <div class="index-tab-btn" onclick="switchTab('monthly')">OCT</div>
+          <div class="index-tab-btn" onclick="switchTab('monthly')">NOV</div>
+          <div class="index-tab-btn" onclick="switchTab('monthly')">DEC</div>
+        </div>
+        <div class="index-tab-btn" onclick="switchTab('note')">NOTE</div>
+      </aside>
+    </div>
+
+    <!-- ========================================================
+         TAB 2: MONTHLY PLANNER (월간 플래너 - Image 1 Style)
+    ======================================================== -->
+    <div id="tab-monthly" class="page-tab-content w-full h-full flex flex-row hidden">
+      <div class="flex-1 flex flex-col p-4 pr-3 overflow-hidden">
+        
+        <!-- Header row -->
+        <div class="flex items-end justify-between mb-3 px-1">
+          <div class="flex items-baseline space-x-2">
+            <span class="text-4xl font-light tracking-tight text-[#2C2A29]" contenteditable="true">01</span>
+            <span class="text-lg font-medium text-stone-500" contenteditable="true">January</span>
+            <span class="text-xs text-stone-400 ml-2">2027</span>
+          </div>
+          <div class="text-[11px] text-stone-400 tracking-wider">MONTHLY STUDY PLAN</div>
+        </div>
+
+        <!-- Main Body: Left Side (Checklist + Memo Grid) + Right Calendar Grid -->
+        <div class="flex-1 flex flex-row gap-3 overflow-hidden">
+          
+          <!-- Left Column (approx 20% width) -->
+          <div class="w-[54mm] flex flex-col gap-3">
+            <!-- CHECK LIST Card -->
+            <div class="planner-card flex flex-col p-2.5 h-[48%]">
+              <div class="text-[10px] font-semibold text-stone-500 tracking-wider mb-2 text-center border-b border-stone-200 pb-1">
+                CHECK LIST
+              </div>
+              <div class="flex-1 flex flex-col justify-between py-1 text-xs text-stone-700">
+                <div class="flex items-center space-x-2 border-b border-stone-100 pb-1.5">
+                  <span class="w-3.5 h-3.5 rounded-full border border-stone-300 flex-shrink-0 cursor-pointer hover:bg-stone-200" onclick="this.classList.toggle('bg-stone-700')"></span>
+                  <div class="flex-1 outline-none truncate" contenteditable="true"><br></div>
+                </div>
+                <div class="flex items-center space-x-2 border-b border-stone-100 pb-1.5">
+                  <span class="w-3.5 h-3.5 rounded-full border border-stone-300 flex-shrink-0 cursor-pointer hover:bg-stone-200" onclick="this.classList.toggle('bg-stone-700')"></span>
+                  <div class="flex-1 outline-none truncate" contenteditable="true"><br></div>
+                </div>
+                <div class="flex items-center space-x-2 border-b border-stone-100 pb-1.5">
+                  <span class="w-3.5 h-3.5 rounded-full border border-stone-300 flex-shrink-0 cursor-pointer hover:bg-stone-200" onclick="this.classList.toggle('bg-stone-700')"></span>
+                  <div class="flex-1 outline-none truncate" contenteditable="true"><br></div>
+                </div>
+                <div class="flex items-center space-x-2 border-b border-stone-100 pb-1.5">
+                  <span class="w-3.5 h-3.5 rounded-full border border-stone-300 flex-shrink-0 cursor-pointer hover:bg-stone-200" onclick="this.classList.toggle('bg-stone-700')"></span>
+                  <div class="flex-1 outline-none truncate" contenteditable="true"><br></div>
+                </div>
+                <div class="flex items-center space-x-2 border-b border-stone-100 pb-1.5">
+                  <span class="w-3.5 h-3.5 rounded-full border border-stone-300 flex-shrink-0 cursor-pointer hover:bg-stone-200" onclick="this.classList.toggle('bg-stone-700')"></span>
+                  <div class="flex-1 outline-none truncate" contenteditable="true"><br></div>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <span class="w-3.5 h-3.5 rounded-full border border-stone-300 flex-shrink-0 cursor-pointer hover:bg-stone-200" onclick="this.classList.toggle('bg-stone-700')"></span>
+                  <div class="flex-1 outline-none truncate" contenteditable="true"><br></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Grid Memo Box -->
+            <div class="planner-card pattern-grid flex-1 p-2 relative">
+              <span class="text-[9px] font-medium text-stone-400 absolute top-1.5 left-2 uppercase tracking-wide">MEMO</span>
+              <div class="w-full h-full pt-4 text-[11px] text-stone-700 outline-none" contenteditable="true"></div>
+            </div>
+          </div>
+
+          <!-- Right Calendar Grid Card -->
+          <div class="flex-1 planner-card flex flex-col p-2.5 overflow-hidden">
+            <!-- Day Headers -->
+            <div class="grid grid-cols-7 border-b border-stone-200 pb-1.5 text-center text-[10px] font-semibold text-stone-500">
+              <span class="text-rose-500">SUN</span>
+              <span>MON</span>
+              <span>TUE</span>
+              <span>WED</span>
+              <span>THU</span>
+              <span>FRI</span>
+              <span class="text-sky-600">SAT</span>
+            </div>
+
+            <!-- Calendar Cells (Jan 2027 starts on Friday) -->
+            <div class="flex-1 grid grid-cols-7 grid-rows-5 gap-px bg-[#E2DED6] border border-[#E2DED6] rounded overflow-hidden mt-1 text-xs">
+              <!-- Row 1: Dec 27 ~ Jan 2 -->
+              <div class="bg-white/60 p-1 flex flex-col justify-between text-stone-300"><span>27</span></div>
+              <div class="bg-white/60 p-1 flex flex-col justify-between text-stone-300"><span>28</span></div>
+              <div class="bg-white/60 p-1 flex flex-col justify-between text-stone-300"><span>29</span></div>
+              <div class="bg-white/60 p-1 flex flex-col justify-between text-stone-300"><span>30</span></div>
+              <div class="bg-white/60 p-1 flex flex-col justify-between text-stone-300"><span>31</span></div>
+              <div class="bg-white p-1 flex flex-col justify-between group">
+                <div class="flex justify-between items-center"><span class="font-semibold text-rose-500">1</span><span class="text-[8.5px] text-rose-500">신정</span></div>
+                <div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div>
+              </div>
+              <div class="bg-white p-1 flex flex-col justify-between">
+                <div class="flex justify-between items-center"><span class="font-semibold text-sky-600">2</span><span class="text-[8px] text-stone-300 font-medium">W1</span></div>
+                <div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div>
+              </div>
+
+              <!-- Row 2: Jan 3 ~ Jan 9 -->
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-rose-500">3</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">4</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">5</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">6</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">7</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">8</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between">
+                <div class="flex justify-between items-center"><span class="font-semibold text-sky-600">9</span><span class="text-[8px] text-stone-300 font-medium">W2</span></div>
+                <div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div>
+              </div>
+
+              <!-- Row 3: Jan 10 ~ Jan 16 -->
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-rose-500">10</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">11</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">12</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">13</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">14</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">15</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between">
+                <div class="flex justify-between items-center"><span class="font-semibold text-sky-600">16</span><span class="text-[8px] text-stone-300 font-medium">W3</span></div>
+                <div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div>
+              </div>
+
+              <!-- Row 4: Jan 17 ~ Jan 23 -->
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-rose-500">17</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">18</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">19</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">20</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">21</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">22</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between">
+                <div class="flex justify-between items-center"><span class="font-semibold text-sky-600">23</span><span class="text-[8px] text-stone-300 font-medium">W4</span></div>
+                <div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div>
+              </div>
+
+              <!-- Row 5: Jan 24 ~ Jan 31 -->
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-rose-500">24</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">25</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">26</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">27</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">28</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between"><span class="font-semibold text-stone-700">29</span><div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div></div>
+              <div class="bg-white p-1 flex flex-col justify-between">
+                <div class="flex justify-between items-center"><span class="font-semibold text-sky-600">30</span><span class="text-[8px] text-stone-300 font-medium">W5</span></div>
+                <div class="text-[10px] text-stone-600 flex-1 outline-none" contenteditable="true"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Right Index Bar -->
+      <aside class="index-bar">
+        <div class="w-4 h-4 grid grid-cols-2 gap-0.5 opacity-60">
+          <div class="bg-stone-500 rounded-xs"></div><div class="bg-stone-500 rounded-xs"></div>
+          <div class="bg-stone-500 rounded-xs"></div><div class="bg-stone-500 rounded-xs"></div>
+        </div>
+        <div class="flex flex-col space-y-1 w-full items-center">
+          <div class="index-tab-btn active">JAN</div>
+          <div class="index-tab-btn">FEB</div>
+          <div class="index-tab-btn">MAR</div>
+          <div class="index-tab-btn">APR</div>
+          <div class="index-tab-btn">MAY</div>
+          <div class="index-tab-btn">JUN</div>
+          <div class="index-tab-btn">JUL</div>
+          <div class="index-tab-btn">AUG</div>
+          <div class="index-tab-btn">SEP</div>
+          <div class="index-tab-btn">OCT</div>
+          <div class="index-tab-btn">NOV</div>
+          <div class="index-tab-btn">DEC</div>
+        </div>
+        <div class="index-tab-btn" onclick="switchTab('note')">NOTE</div>
+      </aside>
+    </div>
+
+    <!-- ========================================================
+         TAB 3: WEEKLY PLANNER (주간 플래너 - Image 2 Style)
+    ======================================================== -->
+    <div id="tab-weekly" class="page-tab-content w-full h-full flex flex-row hidden">
+      <div class="flex-1 flex flex-col p-4 pr-3 overflow-hidden">
+        
+        <!-- Top bar with Month and Week Number -->
+        <div class="bg-stone-200/60 rounded px-3 py-1 flex items-center justify-between mb-2.5">
+          <div class="flex items-center space-x-2">
+            <span class="text-sm font-bold text-stone-800" contenteditable="true">January</span>
+            <span class="text-xs text-stone-500 font-medium">/ WEEK 02 (Jan 11 ~ Jan 17, 2027)</span>
+          </div>
+          <div class="text-[11px] text-stone-500" contenteditable="true">이번 주 핵심 테마: 취약 유형 집중 공략</div>
+        </div>
+
+        <!-- Weekly Layout Grid: 4 columns x 2 rows -->
+        <div class="flex-1 grid grid-cols-4 grid-rows-2 gap-2.5 overflow-hidden">
+          
+          <!-- Box 1 (Top-Left): Mini Calendar + Weekly Wrap-up -->
+          <div class="flex flex-col gap-2">
+            <!-- Mini Calendar -->
+            <div class="planner-card p-2 flex flex-col items-center justify-center flex-1">
+              <div class="text-[9.5px] font-bold text-stone-600 mb-1">JANUARY 2027</div>
+              <div class="grid grid-cols-7 gap-x-1.5 gap-y-0.5 text-[8.5px] text-center text-stone-500">
+                <span class="text-rose-500 font-bold">S</span><span class="font-bold">M</span><span class="font-bold">T</span><span class="font-bold">W</span><span class="font-bold">T</span><span class="font-bold">F</span><span class="text-sky-600 font-bold">S</span>
+                <span class="text-stone-300"></span><span class="text-stone-300"></span><span class="text-stone-300"></span><span class="text-stone-300"></span><span class="text-stone-300"></span><span>1</span><span>2</span>
+                <span class="text-rose-500">3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span class="text-sky-600">9</span>
+                <span class="text-rose-500 bg-amber-100 rounded-full font-bold">10</span><span class="bg-amber-100">11</span><span class="bg-amber-100">12</span><span class="bg-amber-100">13</span><span class="bg-amber-100">14</span><span class="bg-amber-100">15</span><span class="bg-amber-100 text-sky-600">16</span>
+                <span class="text-rose-500">17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span class="text-sky-600">23</span>
+                <span class="text-rose-500">24</span><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span class="text-sky-600">30</span>
+              </div>
+            </div>
+            <!-- Weekly Wrap-up -->
+            <div class="planner-card p-2 h-[45%] flex flex-col">
+              <span class="text-[9px] font-semibold text-stone-400 uppercase tracking-wide">WEEKLY WRAP-UP</span>
+              <div class="flex-1 text-[10px] text-stone-700 outline-none pt-1" contenteditable="true"><br></div>
+            </div>
+          </div>
+
+          <!-- Box 2 (Top Mid-Left): TO-DO List + HABIT TRACKER -->
+          <div class="flex flex-col gap-2">
+            <!-- TO-DO -->
+            <div class="planner-card p-2 flex-1 flex flex-col justify-between">
+              <span class="text-[9.5px] font-bold text-stone-500 tracking-wide border-b border-stone-200 pb-0.5">TO-DO</span>
+              <div class="space-y-1.5 py-1 text-[10px] text-stone-700">
+                <div class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><div class="flex-1 truncate outline-none" contenteditable="true"><br></div></div>
+                <div class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><div class="flex-1 truncate outline-none" contenteditable="true"><br></div></div>
+                <div class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><div class="flex-1 truncate outline-none" contenteditable="true"><br></div></div>
+                <div class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><div class="flex-1 truncate outline-none" contenteditable="true"><br></div></div>
+                <div class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><div class="flex-1 truncate outline-none" contenteditable="true"><br></div></div>
+              </div>
+            </div>
+            <!-- TRACKER -->
+            <div class="planner-card p-2 h-[42%] flex flex-col justify-between">
+              <div class="flex justify-between items-center text-[9px] font-semibold text-stone-500">
+                <span>TRACKER</span>
+                <span class="tracking-widest text-[8px] text-stone-400">M T W T F S S</span>
+              </div>
+              <div class="space-y-1.5 py-0.5">
+                <div class="flex items-center justify-between"><span class="text-[9px] text-stone-600 truncate max-w-[48px]" contenteditable="true">기상 06시</span><div class="flex space-x-1"><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer hover:bg-stone-300" onclick="this.classList.toggle('bg-stone-700')"></span><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span></div></div>
+                <div class="flex items-center justify-between"><span class="text-[9px] text-stone-600 truncate max-w-[48px]" contenteditable="true">영단어 50개</span><div class="flex space-x-1"><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span></div></div>
+                <div class="flex items-center justify-between"><span class="text-[9px] text-stone-600 truncate max-w-[48px]" contenteditable="true">운동 30분</span><div class="flex space-x-1"><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span><span class="w-2.5 h-2.5 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Daily Box: MON -->
+          <div class="planner-card pattern-grid flex flex-col p-2">
+            <div class="w-full text-center py-0.5 border border-stone-300 bg-white rounded-full text-[10px] font-semibold text-stone-700 mb-1.5 shadow-2xs">MON</div>
+            <div class="flex-1 text-[10px] text-stone-700 outline-none" contenteditable="true"></div>
+          </div>
+
+          <!-- Daily Box: TUE -->
+          <div class="planner-card pattern-grid flex flex-col p-2">
+            <div class="w-full text-center py-0.5 border border-stone-300 bg-white rounded-full text-[10px] font-semibold text-stone-700 mb-1.5 shadow-2xs">TUE</div>
+            <div class="flex-1 text-[10px] text-stone-700 outline-none" contenteditable="true"></div>
+          </div>
+
+          <!-- Daily Box: WED -->
+          <div class="planner-card pattern-grid flex flex-col p-2">
+            <div class="w-full text-center py-0.5 border border-stone-300 bg-white rounded-full text-[10px] font-semibold text-stone-700 mb-1.5 shadow-2xs">WED</div>
+            <div class="flex-1 text-[10px] text-stone-700 outline-none" contenteditable="true"></div>
+          </div>
+
+          <!-- Daily Box: THU -->
+          <div class="planner-card pattern-grid flex flex-col p-2">
+            <div class="w-full text-center py-0.5 border border-stone-300 bg-white rounded-full text-[10px] font-semibold text-stone-700 mb-1.5 shadow-2xs">THU</div>
+            <div class="flex-1 text-[10px] text-stone-700 outline-none" contenteditable="true"></div>
+          </div>
+
+          <!-- Daily Box: FRI -->
+          <div class="planner-card pattern-grid flex flex-col p-2">
+            <div class="w-full text-center py-0.5 border border-stone-300 bg-white rounded-full text-[10px] font-semibold text-stone-700 mb-1.5 shadow-2xs">FRI</div>
+            <div class="flex-1 text-[10px] text-stone-700 outline-none" contenteditable="true"></div>
+          </div>
+
+          <!-- Daily Box: SAT / SUN -->
+          <div class="planner-card pattern-grid flex flex-col p-2">
+            <div class="w-full text-center py-0.5 border border-rose-300 bg-white rounded-full text-[10px] font-semibold text-rose-600 mb-1.5 shadow-2xs">SAT / SUN</div>
+            <div class="flex-1 text-[10px] text-stone-700 outline-none" contenteditable="true"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Right Index Bar -->
+      <aside class="index-bar">
+        <div class="w-4 h-4 grid grid-cols-2 gap-0.5 opacity-60">
+          <div class="bg-stone-500 rounded-xs"></div><div class="bg-stone-500 rounded-xs"></div>
+          <div class="bg-stone-500 rounded-xs"></div><div class="bg-stone-500 rounded-xs"></div>
+        </div>
+        <div class="flex flex-col space-y-1 w-full items-center">
+          <div class="index-tab-btn active">JAN</div>
+          <div class="index-tab-btn">FEB</div>
+          <div class="index-tab-btn">MAR</div>
+          <div class="index-tab-btn">APR</div>
+          <div class="index-tab-btn">MAY</div>
+          <div class="index-tab-btn">JUN</div>
+          <div class="index-tab-btn">JUL</div>
+          <div class="index-tab-btn">AUG</div>
+          <div class="index-tab-btn">SEP</div>
+          <div class="index-tab-btn">OCT</div>
+          <div class="index-tab-btn">NOV</div>
+          <div class="index-tab-btn">DEC</div>
+        </div>
+        <div class="index-tab-btn" onclick="switchTab('note')">NOTE</div>
+      </aside>
+    </div>
+
+    <!-- ========================================================
+         TAB 4: DAILY STUDY PLANNER (일간 플래너 - Image 3 Style)
+    ======================================================== -->
+    <div id="tab-daily" class="page-tab-content w-full h-full flex flex-row hidden">
+      <div class="flex-1 flex flex-col p-3 pr-3 overflow-hidden">
+        
+        <!-- Top Metadata Header Bar -->
+        <div class="bg-stone-200/50 rounded-md px-3 py-1 flex items-center justify-between mb-2 border border-stone-200 text-stone-700">
+          <div class="flex items-center space-x-3">
+            <div class="text-sm font-bold text-stone-800 flex items-center space-x-1">
+              <span contenteditable="true">January</span>
+              <span>/</span>
+              <span contenteditable="true" class="text-stone-600 font-semibold">15</span>
+              <span class="text-xs text-stone-400 font-normal">2027</span>
+            </div>
+            <!-- Day of week pills -->
+            <div class="flex space-x-1 text-[9px] font-semibold text-stone-500 pl-2">
+              <span class="px-1.5 py-0.2 rounded hover:bg-white cursor-pointer">Mon.</span>
+              <span class="px-1.5 py-0.2 rounded hover:bg-white cursor-pointer">Tue.</span>
+              <span class="px-1.5 py-0.2 rounded hover:bg-white cursor-pointer">Wed.</span>
+              <span class="px-1.5 py-0.2 rounded hover:bg-white cursor-pointer">Thu.</span>
+              <span class="px-1.5 py-0.2 rounded bg-stone-700 text-white cursor-pointer">Fri.</span>
+              <span class="px-1.5 py-0.2 rounded hover:bg-white cursor-pointer text-sky-600">Sat.</span>
+              <span class="px-1.5 py-0.2 rounded hover:bg-white cursor-pointer text-rose-500">Sun.</span>
+            </div>
+          </div>
+
+          <!-- Weather & Study Time Badge -->
+          <div class="flex items-center space-x-4">
+            <!-- Weather symbols -->
+            <div class="flex space-x-2 text-stone-400 text-xs cursor-pointer">
+              <span title="맑음" class="text-amber-500 hover:scale-110">☀️</span>
+              <span title="구름" class="hover:scale-110">⛅</span>
+              <span title="흐림" class="hover:scale-110">☁️</span>
+              <span title="비" class="hover:scale-110">🌧️</span>
+              <span title="눈" class="hover:scale-110">❄️</span>
+            </div>
+
+            <!-- Total Study Time Box -->
+            <div class="bg-white border border-stone-300 rounded px-2.5 py-0.5 text-[10.5px] font-semibold text-stone-800 flex items-center space-x-1 shadow-2xs">
+              <span class="text-stone-400 font-medium">총 공부 시간</span>
+              <span contenteditable="true" class="text-amber-700 font-bold px-1 bg-amber-50/50 rounded">&nbsp;&nbsp;</span>
+              <span>시간</span>
+              <span contenteditable="true" class="text-amber-700 font-bold px-1 bg-amber-50/50 rounded">&nbsp;&nbsp;</span>
+              <span>분</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3-Column Daily Architecture -->
+        <div class="flex-1 flex flex-row gap-2.5 overflow-hidden">
+          
+          <!-- Column 1 (Left): GOAL, CHECK (Tasks), THANKS TO -->
+          <div class="w-[66mm] flex flex-col gap-2">
+            <!-- GOAL Box -->
+            <div class="planner-card p-2 h-[22%] flex flex-col">
+              <span class="text-[9.5px] font-bold text-stone-500 tracking-wide mb-0.5">GOAL</span>
+              <div class="flex-1 text-[11px] text-stone-700 outline-none leading-relaxed font-medium" contenteditable="true">
+                수학 킬러 문항 5개 분석 완료 및 인강 3강 완강하기
+              </div>
+            </div>
+
+            <!-- CHECK (Tasks) Box -->
+            <div class="planner-card p-2 flex-1 flex flex-col justify-between">
+              <span class="text-[9.5px] font-bold text-stone-500 tracking-wide border-b border-stone-200 pb-0.5 mb-1">CHECK</span>
+              <div class="flex-1 flex flex-col justify-between text-[10.5px] text-stone-700 py-0.5">
+                <div class="flex items-center space-x-2 border-b border-stone-100 pb-1">
+                  <span class="w-3 h-3 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span>
+                  <div class="flex-1 truncate outline-none" contenteditable="true">수학 미적분 수능특강 4단원 풀이</div>
+                </div>
+                <div class="flex items-center space-x-2 border-b border-stone-100 pb-1">
+                  <span class="w-3 h-3 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span>
+                  <div class="flex-1 truncate outline-none" contenteditable="true">국어 문학 연계교재 작품 해설 분석</div>
+                </div>
+                <div class="flex items-center space-x-2 border-b border-stone-100 pb-1">
+                  <span class="w-3 h-3 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span>
+                  <div class="flex-1 truncate outline-none" contenteditable="true">영어 구문독해 15개 문장 끊어읽기</div>
+                </div>
+                <div class="flex items-center space-x-2 border-b border-stone-100 pb-1">
+                  <span class="w-3 h-3 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span>
+                  <div class="flex-1 truncate outline-none" contenteditable="true">탐구과목 핵심 개념 마인드맵 정리</div>
+                </div>
+                <div class="flex items-center space-x-2 border-b border-stone-100 pb-1">
+                  <span class="w-3 h-3 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span>
+                  <div class="flex-1 truncate outline-none" contenteditable="true">수학 오답 유사 문항 2회 반복 풀이</div>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <span class="w-3 h-3 rounded-full border border-stone-300 cursor-pointer" onclick="this.classList.toggle('bg-stone-700')"></span>
+                  <div class="flex-1 truncate outline-none" contenteditable="true">오늘 공부한 내용 백지 인출 테스트</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- THANKS TO / REFLECTION Box -->
+            <div class="planner-card p-2 h-[22%] flex flex-col">
+              <span class="text-[9.5px] font-bold text-stone-500 tracking-wide mb-0.5">THANKS TO / REVIEW</span>
+              <div class="flex-1 text-[10.5px] text-stone-600 outline-none leading-relaxed" contenteditable="true">
+                오후 슬럼프를 이겨내고 계획한 순공 시간을 채워서 보람찼다. 내일도 집중 유지하기!
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2 (Center): TIMETABLE (SCHEDULE) 04:00 ~ 02:00 -->
+          <div class="w-[68mm] planner-card p-2 flex flex-col overflow-hidden">
+            <div class="flex justify-between items-center border-b border-stone-200 pb-1 mb-1">
+              <span class="text-[9.5px] font-bold text-stone-500 tracking-wide">SCHEDULE &amp; TIMETABLE</span>
+              <span class="text-[8px] text-stone-400">10-MIN BLOCKS</span>
+            </div>
+            
+            <div class="flex-1 grid grid-rows-[repeat(23,minmax(0,1fr))] text-[8.5px] text-stone-600 divide-y divide-stone-100 overflow-hidden">
+              <!-- Hours list generator loop in markup -->
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">04:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true"></div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">05:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true"></div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">06:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">기상 &amp; 아침 스트레칭</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">07:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">국어 비문학 3지문 독해</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">08:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">영어 단어 암기 &amp; 듣기</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">09:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">수학 미적분 심화 문제 풀이</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">10:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">수학 문제 해설 및 오답 정리</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">11:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">인강 시청 (수학 4단원)</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">12:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">점심 식사 &amp; 산책 휴식</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">13:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">영어 구문 독해 연습</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">14:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">영어 빈칸추론 기출 10제</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">15:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">탐구 개념 요약 정리</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">16:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">탐구 기출 풀이 &amp; 마인드맵</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">17:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">국어 문학 연계 문제 풀이</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">18:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">저녁 식사</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">19:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">취약단원 복습 및 인강 시청</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">20:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">일일 총 오답노트 작성</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">21:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">백지 인출 복습</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">22:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">플래너 점검 &amp; 내일 계획</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">23:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">자유 독서 / 취침 준비</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">24:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true">취침</div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">01:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true"></div></div>
+              <div class="flex items-center py-0.2"><span class="w-8 font-semibold text-stone-400">02:00</span><div class="flex-1 h-full flex items-center px-1 hover:bg-amber-50 cursor-pointer" contenteditable="true"></div></div>
+            </div>
+          </div>
+
+          <!-- Column 3 (Right): ACCOUNT, QUOTE, MOOD & WATER, NOTE GRID -->
+          <div class="flex-1 flex flex-col gap-2">
+            
+            <!-- Top Sub-row: ACCOUNT + QUOTE -->
+            <div class="flex gap-2 h-[34%]">
+              <!-- ACCOUNT / Study Record table -->
+              <div class="planner-card p-2 flex-1 flex flex-col">
+                <span class="text-[9.5px] font-bold text-stone-500 tracking-wide border-b border-stone-200 pb-0.5">STUDY LOG / 과목별</span>
+                <div class="flex-1 grid grid-cols-2 grid-rows-3 gap-1 pt-1 text-[9.5px]">
+                  <div class="border border-stone-200 rounded p-1 flex justify-between items-center"><span class="text-stone-500">국어</span><span contenteditable="true" class="font-semibold">2h 10m</span></div>
+                  <div class="border border-stone-200 rounded p-1 flex justify-between items-center"><span class="text-stone-500">수학</span><span contenteditable="true" class="font-semibold">3h 40m</span></div>
+                  <div class="border border-stone-200 rounded p-1 flex justify-between items-center"><span class="text-stone-500">영어</span><span contenteditable="true" class="font-semibold">1h 30m</span></div>
+                  <div class="border border-stone-200 rounded p-1 flex justify-between items-center"><span class="text-stone-500">탐구</span><span contenteditable="true" class="font-semibold">1h 20m</span></div>
+                  <div class="border border-stone-200 rounded p-1 flex justify-between items-center"><span class="text-stone-500">기타</span><span contenteditable="true" class="font-semibold">-</span></div>
+                  <div class="border border-stone-200 rounded p-1 flex justify-between items-center bg-stone-50"><span class="text-stone-600 font-bold">합계</span><span contenteditable="true" class="font-bold text-stone-800">8h 40m</span></div>
+                </div>
+              </div>
+
+              <!-- QUOTE Box -->
+              <div class="planner-card p-2.5 w-[42%] flex flex-col justify-between relative bg-stone-50/50">
+                <span class="text-2xl font-serif text-stone-300 absolute top-1 left-2">“</span>
+                <div class="flex-1 flex items-center justify-center text-center px-1 text-[10.5px] font-medium text-stone-600 italic outline-none leading-relaxed" contenteditable="true"></div>
+                <span class="text-2xl font-serif text-stone-300 absolute bottom-0 right-2">”</span>
+              </div>
+            </div>
+
+            <!-- Middle Sub-row: MOOD + WATER TRACKER -->
+            <div class="flex items-center justify-between px-2 py-1.5 bg-white border border-[#E2DED6] rounded-lg">
+              <!-- Mood tracker with face icons -->
+              <div class="flex items-center space-x-2">
+                <span class="text-[9px] font-bold text-stone-400">MOOD</span>
+                <div class="flex space-x-1 text-sm cursor-pointer select-none">
+                  <span class="hover:scale-125 transition" onclick="selectIcon(this)">😄</span>
+                  <span class="hover:scale-125 transition" onclick="selectIcon(this)">🙂</span>
+                  <span class="hover:scale-125 transition" onclick="selectIcon(this)">😐</span>
+                  <span class="hover:scale-125 transition" onclick="selectIcon(this)">😫</span>
+                  <span class="hover:scale-125 transition" onclick="selectIcon(this)">🔥</span>
+                </div>
+              </div>
+
+              <!-- Water Tracker with 8 glasses -->
+              <div class="flex items-center space-x-2">
+                <span class="text-[9px] font-bold text-stone-400">WATER (2L)</span>
+                <div class="flex space-x-1 cursor-pointer">
+                  <span class="text-xs opacity-40 hover:opacity-100" onclick="toggleGlass(this)">🥛</span>
+                  <span class="text-xs opacity-40 hover:opacity-100" onclick="toggleGlass(this)">🥛</span>
+                  <span class="text-xs opacity-40 hover:opacity-100" onclick="toggleGlass(this)">🥛</span>
+                  <span class="text-xs opacity-40 hover:opacity-100" onclick="toggleGlass(this)">🥛</span>
+                  <span class="text-xs opacity-40 hover:opacity-100" onclick="toggleGlass(this)">🥛</span>
+                  <span class="text-xs opacity-40 hover:opacity-100" onclick="toggleGlass(this)">🥛</span>
+                  <span class="text-xs opacity-40 hover:opacity-100" onclick="toggleGlass(this)">🥛</span>
+                  <span class="text-xs opacity-40 hover:opacity-100" onclick="toggleGlass(this)">🥛</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Note Grid -->
+            <div class="planner-card pattern-grid flex-1 p-2 relative flex flex-col">
+              <span class="text-[9px] font-bold text-stone-400 tracking-wider">NOTE &amp; FORMULA</span>
+              <div class="flex-1 outline-none text-[10.5px] text-stone-700 pt-1" contenteditable="true">
+                오답 핵심 공식 및 내일 반드시 기억해야 할 키워드 기록
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Right Index Bar -->
+      <aside class="index-bar">
+        <div class="w-4 h-4 grid grid-cols-2 gap-0.5 opacity-60">
+          <div class="bg-stone-500 rounded-xs"></div><div class="bg-stone-500 rounded-xs"></div>
+          <div class="bg-stone-500 rounded-xs"></div><div class="bg-stone-500 rounded-xs"></div>
+        </div>
+        <div class="flex flex-col space-y-1 w-full items-center">
+          <div class="index-tab-btn active">JAN</div>
+          <div class="index-tab-btn">FEB</div>
+          <div class="index-tab-btn">MAR</div>
+          <div class="index-tab-btn">APR</div>
+          <div class="index-tab-btn">MAY</div>
+          <div class="index-tab-btn">JUN</div>
+          <div class="index-tab-btn">JUL</div>
+          <div class="index-tab-btn">AUG</div>
+          <div class="index-tab-btn">SEP</div>
+          <div class="index-tab-btn">OCT</div>
+          <div class="index-tab-btn">NOV</div>
+          <div class="index-tab-btn">DEC</div>
+        </div>
+        <div class="index-tab-btn" onclick="switchTab('note')">NOTE</div>
+      </aside>
+    </div>
+
+    <!-- ========================================================
+         TAB 5: NOTE TEMPLATES (메모 노트: 무지/도트/라인/모눈종이)
+    ======================================================== -->
+    <div id="tab-note" class="page-tab-content w-full h-full flex flex-row hidden">
+      <div class="flex-1 flex flex-col p-4 pr-3 overflow-hidden">
+        
+        <!-- Note Header & Pattern Type Selector -->
+        <div class="flex items-center justify-between border-b border-[#E2DED6] pb-2 mb-2">
+          <div class="flex items-baseline space-x-3">
+            <span class="text-xl font-bold tracking-tight text-stone-800" contenteditable="true">STUDY NOTE</span>
+            <span class="text-xs text-stone-400">Date: <span contenteditable="true">2027.____.____</span></span>
+            <span class="text-xs text-stone-400">Subject: <span contenteditable="true" class="font-medium text-stone-600"></span></span>
+          </div>
+
+          <!-- Note Pattern Type Switcher (Screen controls) -->
+          <div class="no-print flex items-center space-x-1 bg-stone-100 p-0.5 rounded-md border border-stone-300 text-xs">
+            <button onclick="setNotePattern('grid')" id="btn-grid" class="px-2 py-0.5 rounded bg-white font-medium text-stone-800 shadow-2xs">모눈(Grid)</button>
+            <button onclick="setNotePattern('line')" id="btn-line" class="px-2 py-0.5 rounded text-stone-600 hover:text-stone-900">라인(Line)</button>
+            <button onclick="setNotePattern('dot')" id="btn-dot" class="px-2 py-0.5 rounded text-stone-600 hover:text-stone-900">도트(Dot)</button>
+            <button onclick="setNotePattern('blank')" id="btn-blank" class="px-2 py-0.5 rounded text-stone-600 hover:text-stone-900">무지(Blank)</button>
+          </div>
+        </div>
+
+        <!-- Note Canvas Body -->
+        <div id="note-canvas" class="flex-1 planner-card p-4 text-xs text-stone-800 outline-none leading-relaxed pattern-grid" contenteditable="true"><br></div>
+      </div>
+
+      <!-- Right Index Bar -->
+      <aside class="index-bar">
+        <div class="w-4 h-4 grid grid-cols-2 gap-0.5 opacity-60">
+          <div class="bg-stone-500 rounded-xs"></div><div class="bg-stone-500 rounded-xs"></div>
+          <div class="bg-stone-500 rounded-xs"></div><div class="bg-stone-500 rounded-xs"></div>
+        </div>
+        <div class="flex flex-col space-y-1 w-full items-center">
+          <div class="index-tab-btn" onclick="switchTab('yearly')">YEAR</div>
+          <div class="index-tab-btn" onclick="switchTab('monthly')">JAN</div>
+          <div class="index-tab-btn">FEB</div>
+          <div class="index-tab-btn">MAR</div>
+          <div class="index-tab-btn">APR</div>
+          <div class="index-tab-btn">MAY</div>
+          <div class="index-tab-btn">JUN</div>
+          <div class="index-tab-btn">JUL</div>
+          <div class="index-tab-btn">AUG</div>
+          <div class="index-tab-btn">SEP</div>
+          <div class="index-tab-btn">OCT</div>
+          <div class="index-tab-btn">NOV</div>
+          <div class="index-tab-btn">DEC</div>
+        </div>
+        <div class="index-tab-btn active">NOTE</div>
+      </aside>
+    </div>
+
+  </main>
+
+  <script>
+    // Tab Switching Logic
+    function switchTab(tabId) {
+      // Hide all tabs
+      document.querySelectorAll('.page-tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+        tab.classList.remove('active');
+      });
+      // Deactivate all nav buttons
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-white', 'text-stone-900', 'shadow-sm', 'active');
+        btn.classList.add('text-stone-700');
+      });
+
+      // Show selected tab
+      const targetTab = document.getElementById('tab-' + tabId);
+      if (targetTab) {
+        targetTab.classList.remove('hidden');
+        targetTab.classList.add('active');
+      }
+
+      // Activate nav button
+      const targetBtn = document.getElementById('nav-' + tabId);
+      if (targetBtn) {
+        targetBtn.classList.add('bg-white', 'text-stone-900', 'shadow-sm', 'active');
+        targetBtn.classList.remove('text-stone-700');
+      }
+    }
+
+    // Note template switcher
+    function setNotePattern(type) {
+      const canvas = document.getElementById('note-canvas');
+      canvas.className = 'flex-1 planner-card p-4 text-xs text-stone-800 outline-none leading-relaxed';
+      
+      if (type === 'grid') canvas.classList.add('pattern-grid');
+      else if (type === 'dot') canvas.classList.add('pattern-dot');
+      else if (type === 'line') canvas.classList.add('pattern-line');
+      else if (type === 'blank') canvas.classList.add('pattern-blank');
+
+      // Update button visual styles
+      ['grid', 'dot', 'line', 'blank'].forEach(t => {
+        const btn = document.getElementById('btn-' + t);
+        if (t === type) {
+          btn.className = 'px-2 py-0.5 rounded bg-white font-medium text-stone-800 shadow-2xs';
+        } else {
+          btn.className = 'px-2 py-0.5 rounded text-stone-600 hover:text-stone-900';
+        }
+      });
+    }
+
+    // Toggle interactive glass
+    function toggleGlass(el) {
+      if (el.classList.contains('opacity-40')) {
+        el.classList.remove('opacity-40');
+        el.classList.add('opacity-100', 'scale-110');
+      } else {
+        el.classList.add('opacity-40');
+        el.classList.remove('opacity-100', 'scale-110');
+      }
+    }
+
+    // Select mood icon
+    function selectIcon(el) {
+      el.parentNode.querySelectorAll('span').forEach(s => s.classList.remove('underline', 'scale-125'));
+      el.classList.add('scale-125');
+    }
+
+    // Generate 2027 Calendar for Yearly View (4x3 layout)
+    function build2027YearlyCalendar() {
+      const yearlyGrid = document.getElementById('yearly-grid');
+      if (!yearlyGrid) return;
+      yearlyGrid.innerHTML = '';
+
+      const monthNames = [
+        "01 JANUARY", "02 FEBRUARY", "03 MARCH", "04 APRIL",
+        "05 MAY", "06 JUNE", "07 JULY", "08 AUGUST",
+        "09 SEPTEMBER", "10 OCTOBER", "11 NOVEMBER", "12 DECEMBER"
+      ];
+
+      // Exact day of week for 1st of each month in 2027 (0:Sun, 1:Mon, ..., 6:Sat)
+      // Jan 1, 2027 is Friday (5)
+      for (let m = 0; m < 12; m++) {
+        const firstDay = new Date(2027, m, 1).getDay();
+        const totalDays = new Date(2027, m + 1, 0).getDate();
+
+        const monthCard = document.createElement('div');
+        monthCard.className = 'planner-card p-2 flex flex-col justify-between';
+
+        let daysHtml = '';
+        // Blank cells before the 1st
+        for (let b = 0; b < firstDay; b++) {
+          daysHtml += `<span></span>`;
+        }
+        // Days
+        for (let d = 1; d <= totalDays; d++) {
+          const dayOfWeek = (firstDay + d - 1) % 7;
+          let colorClass = 'text-stone-700';
+          if (dayOfWeek === 0) colorClass = 'text-rose-500 font-semibold';
+          if (dayOfWeek === 6) colorClass = 'text-sky-600 font-semibold';
+          daysHtml += `<span class="${colorClass}">${d}</span>`;
+        }
+
+        monthCard.innerHTML = `
+          <div class="flex justify-between items-center border-b border-stone-200 pb-0.5 mb-1">
+            <span class="font-bold text-[10px] text-stone-700 tracking-wider">${monthNames[m]}</span>
+            <span class="text-[7.5px] text-stone-400 cursor-pointer" onclick="switchTab('monthly')">GO</span>
+          </div>
+          <div class="grid grid-cols-7 gap-x-0.5 gap-y-0.5 text-center text-[7.5px] mb-1">
+            <span class="text-rose-500 font-bold">S</span>
+            <span class="text-stone-500 font-bold">M</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">W</span>
+            <span class="text-stone-500 font-bold">T</span>
+            <span class="text-stone-500 font-bold">F</span>
+            <span class="text-sky-600 font-bold">S</span>
+            ${daysHtml}
+          </div>
+          <div class="border-t border-dashed border-stone-200 pt-0.5 text-[8px] text-stone-400 outline-none truncate" contenteditable="true">
+            주요 학사 일정 및 모의고사 기록
+          </div>
+        `;
+        yearlyGrid.appendChild(monthCard);
+      }
+    }
+
+    // Initialize on window load
+    window.addEventListener('DOMContentLoaded', () => {
+      build2027YearlyCalendar();
+    });
+  </script>
+
+</body></html>
