@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2027학년도 학사일정 스터디 플래너</title>
+  <title>2027학년도 세일고등학교 학습플래너</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Montserrat:wght@400;600;700&display=swap');
 
     :root {
-      --bg-color: #FAF8F5; /* 눈이 편안한 미색 */
+      --bg-color: #FAF8F5; /* 눈의 피로를 줄여주는 소프트 미색 */
       --card-bg: #FFFFFF;
       --border-color: #E2DDD5;
       --border-light: #ECE8E1;
       --text-main: #33312E;
       --text-muted: #8E887E;
+      --school-red: #B2280E; /* 세일고 CI 상징 붉은색 */
       --accent: #5C5248;
-      --accent-badge: #6B7C85;
       --accent-exam: #B85D5D;
       --accent-sat: #4B6E94;
       --accent-sun: #A85858;
@@ -40,7 +40,7 @@
       padding: 20px 0;
     }
 
-    /* 상단 컨트롤 바 (화면에서만 보이고 인쇄 시 제외) */
+    /* 상단 컨트롤 바 (화면 전용) */
     .toolbar {
       width: 297mm;
       max-width: 95vw;
@@ -122,7 +122,7 @@
       overflow: hidden;
     }
 
-    /* 플래너 프레임 내부 그리드: 메인 컨텐츠 + 우측 사이드 탭 */
+    /* 플래너 내부 프레임 */
     .planner-container {
       width: 100%;
       height: 100%;
@@ -139,7 +139,7 @@
       overflow: hidden;
     }
 
-    /* 우측 고정 인덱스 탭 라벨 */
+    /* 우측 고정 인덱스 탭 (3월 ~ 익년 2월 + NOTE) */
     .right-sidebar {
       width: 26px;
       height: 100%;
@@ -147,7 +147,7 @@
       flex-direction: column;
       border-left: 1px solid var(--border-color);
       padding-left: 4px;
-      gap: 3px;
+      gap: 2px;
     }
 
     .index-tab {
@@ -155,14 +155,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 9px;
+      font-size: 8.5px;
       font-weight: 700;
       color: var(--text-muted);
       cursor: pointer;
       border-radius: 3px;
       writing-mode: vertical-rl;
       text-orientation: mixed;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       transition: all 0.15s;
     }
     .index-tab:hover { background: rgba(0,0,0,0.03); color: var(--text-main); }
@@ -172,20 +172,31 @@
     .sheet-header {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
+      align-items: center;
       border-bottom: 2px solid var(--text-main);
       padding-bottom: 5px;
       margin-bottom: 8px;
     }
+    .sheet-title-group {
+      display: flex;
+      flex-direction: column;
+    }
     .sheet-title {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
       letter-spacing: -0.5px;
       color: var(--text-main);
     }
     .sheet-sub {
-      font-size: 11px;
+      font-size: 10.5px;
       color: var(--text-muted);
+    }
+
+    /* 세일고 로고 SVG */
+    .school-logo-svg {
+      width: 38px;
+      height: 38px;
+      flex-shrink: 0;
     }
 
     /* contenteditable 스타일 */
@@ -199,7 +210,7 @@
     }
 
     /* =========================================================
-       1. 연간 플래너 (가로 4달 x 세로 3달)
+       1. 연간 플래너 (4 x 3: 2027.03 ~ 2028.02)
        ========================================================= */
     .yearly-grid {
       display: grid;
@@ -207,14 +218,14 @@
       grid-template-rows: repeat(3, 1fr);
       gap: 7px;
       flex: 1;
-      height: calc(100% - 35px);
+      height: calc(100% - 46px);
     }
 
     .month-card {
       border: 1px solid var(--border-color);
       background: var(--card-bg);
       border-radius: 4px;
-      padding: 6px 8px;
+      padding: 5px 7px;
       display: flex;
       flex-direction: column;
     }
@@ -224,11 +235,11 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border-light);
-      padding-bottom: 3px;
-      margin-bottom: 4px;
+      padding-bottom: 2px;
+      margin-bottom: 3px;
     }
     .month-card-title {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       color: var(--text-main);
     }
@@ -241,16 +252,15 @@
       text-align: center;
     }
     .calendar-table th {
-      padding: 2px 0;
+      padding: 1.5px 0;
       color: var(--text-muted);
       font-weight: 600;
     }
     .calendar-table td {
-      padding: 2px 0;
-      height: 14px;
+      padding: 1.5px 0;
+      height: 13px;
       color: var(--text-main);
       vertical-align: middle;
-      position: relative;
     }
     .calendar-table td.sun { color: var(--accent-sun); }
     .calendar-table td.sat { color: var(--accent-sat); }
@@ -262,20 +272,20 @@
     }
 
     .month-events-box {
-      margin-top: 4px;
+      margin-top: 3px;
       border-top: 1px dashed var(--border-light);
-      padding-top: 4px;
+      padding-top: 3px;
       flex: 1;
       overflow: hidden;
       font-size: 7.5px;
-      line-height: 1.35;
+      line-height: 1.3;
       color: #555;
     }
     .event-item {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      margin-bottom: 1.5px;
+      margin-bottom: 1px;
     }
     .event-badge {
       display: inline-block;
@@ -286,17 +296,16 @@
       margin-right: 2px;
     }
     .badge-exam { background: #FDE8E8; color: #B85D5D; }
-    .badge-sat { background: #E4EFF8; color: #2D6396; }
     .badge-normal { background: #ECEAE4; color: #555048; }
 
     /* =========================================================
-       2. 월간 플래너 (사진 1 구조: 좌측 체크리스트/메모 + 우측 달력)
+       2. 월간 플래너 (좌측 체크리스트/메모 + 우측 달력)
        ========================================================= */
     .monthly-container {
       display: flex;
       gap: 12px;
       flex: 1;
-      height: 100%;
+      height: calc(100% - 46px);
     }
 
     .monthly-left {
@@ -313,13 +322,13 @@
       gap: 6px;
     }
     .monthly-num {
-      font-size: 40px;
+      font-size: 38px;
       font-weight: 700;
       line-height: 1;
       color: var(--text-main);
     }
     .monthly-en {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 400;
       color: var(--text-muted);
     }
@@ -374,7 +383,7 @@
       background-image: 
         linear-gradient(to right, #ECE8E1 1px, transparent 1px),
         linear-gradient(to bottom, #ECE8E1 1px, transparent 1px);
-      min-height: 140px;
+      min-height: 120px;
     }
 
     .monthly-right {
@@ -440,12 +449,12 @@
     }
 
     /* =========================================================
-       3. 주간 플래너 (사진 2 구조: 상단 요약/트래커 + 요일별 카드)
+       3. 주간 플래너
        ========================================================= */
     .weekly-container {
       display: flex;
       flex-direction: column;
-      height: 100%;
+      height: calc(100% - 46px);
       gap: 8px;
     }
 
@@ -524,13 +533,13 @@
     }
 
     /* =========================================================
-       4. 일간 플래너 (사진 3 구조: 타임테이블 + 목표/체크/회고)
+       4. 일간 플래너
        ========================================================= */
     .daily-container {
       display: grid;
       grid-template-columns: 28% 34% 38%;
       gap: 9px;
-      height: 100%;
+      height: calc(100% - 46px);
     }
 
     .daily-col {
@@ -540,7 +549,6 @@
       height: 100%;
     }
 
-    /* 왼쪽 컬럼 */
     .goal-card {
       border: 1px solid var(--border-color);
       background: var(--card-bg);
@@ -569,7 +577,6 @@
       flex-direction: column;
     }
 
-    /* 중앙 타임테이블 */
     .timetable-card {
       border: 1px solid var(--border-color);
       background: var(--card-bg);
@@ -614,7 +621,6 @@
       align-items: center;
     }
 
-    /* 우측 컬럼 */
     .daily-right-top {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -653,23 +659,17 @@
     }
 
     /* =========================================================
-       5. 메모 노트 (무지, 도트, 라인, 모눈)
+       5. 메모 노트 (코넬식, 오답노트, 모눈, 라인, 도트, 무지)
        ========================================================= */
     .note-container {
       width: 100%;
-      height: 100%;
+      height: calc(100% - 46px);
       border: 1px solid var(--border-color);
       background: var(--card-bg);
       border-radius: 4px;
-      padding: 12px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
-    }
-    .note-pattern-area {
-      flex: 1;
-      border: 1px solid var(--border-light);
-      border-radius: 4px;
-      padding: 10px;
     }
 
     .pattern-blank { background: #FFFFFF; }
@@ -687,6 +687,58 @@
         linear-gradient(to right, #E4DFD7 1px, transparent 1px),
         linear-gradient(to bottom, #E4DFD7 1px, transparent 1px);
       background-size: 5mm 5mm;
+    }
+
+    /* 코넬식 노트 레이아웃 */
+    .cornell-wrapper {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      border: 1px solid var(--border-color);
+      background: #FFFFFF;
+    }
+    .cornell-top {
+      display: flex;
+      flex: 1;
+      border-bottom: 1.5px solid var(--text-main);
+    }
+    .cornell-cue {
+      width: 28%;
+      border-right: 1.5px solid var(--text-main);
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+    }
+    .cornell-notes {
+      flex: 1;
+      padding: 8px;
+      background-image: linear-gradient(to bottom, #ECE8E1 1px, transparent 1px);
+      background-size: 100% 7mm;
+      line-height: 7mm;
+    }
+    .cornell-summary {
+      height: 25%;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      background: #FAF8F5;
+    }
+
+    /* 오답 노트 레이아웃 */
+    .wrong-answer-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 45% 55%;
+      gap: 8px;
+      height: 100%;
+    }
+    .wrong-card {
+      border: 1px solid var(--border-color);
+      background: #FFFFFF;
+      border-radius: 4px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
     }
 
     /* 인쇄 전용 스타일 */
@@ -726,22 +778,22 @@
     </div>
 
     <div class="toolbar-right">
-      <!-- 월간/주간/일간 서브 셀렉터 -->
+      <!-- 2027.03 ~ 2028.02 셀렉터 -->
       <div id="monthSelectorWrapper" class="sub-control" style="display:none;">
         <label>월 선택:</label>
-        <select id="monthSelect" onchange="changeMonth(this.value)">
-          <option value="0">1월 (Jan)</option>
-          <option value="1">2월 (Feb)</option>
-          <option value="2" selected>3월 (Mar)</option>
-          <option value="3">4월 (Apr)</option>
-          <option value="4">5월 (May)</option>
-          <option value="5">6월 (Jun)</option>
-          <option value="6">7월 (Jul)</option>
-          <option value="7">8월 (Aug)</option>
-          <option value="8">9월 (Sep)</option>
-          <option value="9">10월 (Oct)</option>
-          <option value="10">11월 (Nov)</option>
-          <option value="11">12월 (Dec)</option>
+        <select id="monthSelect" onchange="changeAcademicMonth(this.value)">
+          <option value="2027-03" selected>2027년 3월 (Mar)</option>
+          <option value="2027-04">2027년 4월 (Apr)</option>
+          <option value="2027-05">2027년 5월 (May)</option>
+          <option value="2027-06">2027년 6월 (Jun)</option>
+          <option value="2027-07">2027년 7월 (Jul)</option>
+          <option value="2027-08">2027년 8월 (Aug)</option>
+          <option value="2027-09">2027년 9월 (Sep)</option>
+          <option value="2027-10">2027년 10월 (Oct)</option>
+          <option value="2027-11">2027년 11월 (Nov)</option>
+          <option value="2027-12">2027년 12월 (Dec)</option>
+          <option value="2028-01">2028년 1월 (Jan)</option>
+          <option value="2028-02">2028년 2월 (Feb)</option>
         </select>
       </div>
 
@@ -758,13 +810,15 @@
 
       <div id="daySelectorWrapper" class="sub-control" style="display:none;">
         <label>일자:</label>
-        <input type="date" id="dailyDatePicker" value="2027-03-02" min="2027-01-01" max="2027-12-31" onchange="renderDaily()">
+        <input type="date" id="dailyDatePicker" value="2027-03-02" min="2027-03-01" max="2028-02-29" onchange="renderDaily()">
       </div>
 
       <div id="noteStyleWrapper" class="sub-control" style="display:none;">
         <label>노트 서식:</label>
         <select id="notePatternSelect" onchange="changeNotePattern(this.value)">
-          <option value="grid">모눈종이 (Grid)</option>
+          <option value="cornell">코넬식 노트 (Cornell)</option>
+          <option value="wrong">오답 정리 노트 (Error Analysis)</option>
+          <option value="grid" selected>모눈종이 (Grid)</option>
           <option value="lined">라인형 (Lined)</option>
           <option value="dot">도트형 (Dot)</option>
           <option value="blank">무지형 (Blank)</option>
@@ -780,24 +834,22 @@
     <div class="planner-container">
       
       <!-- 주 작업 영역 -->
-      <div class="main-canvas" id="mainCanvas">
-        <!-- 동적 렌더링 영역 -->
-      </div>
+      <div class="main-canvas" id="mainCanvas"></div>
 
-      <!-- 우측 고정 인덱스 탭 -->
+      <!-- 우측 고정 인덱스 탭 (3월 ~ 익년 2월 순환) -->
       <div class="right-sidebar">
-        <div class="index-tab" onclick="quickJump('month', 0)">JAN</div>
-        <div class="index-tab" onclick="quickJump('month', 1)">FEB</div>
-        <div class="index-tab" onclick="quickJump('month', 2)">MAR</div>
-        <div class="index-tab" onclick="quickJump('month', 3)">APR</div>
-        <div class="index-tab" onclick="quickJump('month', 4)">MAY</div>
-        <div class="index-tab" onclick="quickJump('month', 5)">JUN</div>
-        <div class="index-tab" onclick="quickJump('month', 6)">JUL</div>
-        <div class="index-tab" onclick="quickJump('month', 7)">AUG</div>
-        <div class="index-tab" onclick="quickJump('month', 8)">SEP</div>
-        <div class="index-tab" onclick="quickJump('month', 9)">OCT</div>
-        <div class="index-tab" onclick="quickJump('month', 10)">NOV</div>
-        <div class="index-tab" onclick="quickJump('month', 11)">DEC</div>
+        <div class="index-tab" onclick="jumpMonth('2027-03')">MAR</div>
+        <div class="index-tab" onclick="jumpMonth('2027-04')">APR</div>
+        <div class="index-tab" onclick="jumpMonth('2027-05')">MAY</div>
+        <div class="index-tab" onclick="jumpMonth('2027-06')">JUN</div>
+        <div class="index-tab" onclick="jumpMonth('2027-07')">JUL</div>
+        <div class="index-tab" onclick="jumpMonth('2027-08')">AUG</div>
+        <div class="index-tab" onclick="jumpMonth('2027-09')">SEP</div>
+        <div class="index-tab" onclick="jumpMonth('2027-10')">OCT</div>
+        <div class="index-tab" onclick="jumpMonth('2027-11')">NOV</div>
+        <div class="index-tab" onclick="jumpMonth('2027-12')">DEC</div>
+        <div class="index-tab" onclick="jumpMonth('2028-01')">JAN</div>
+        <div class="index-tab" onclick="jumpMonth('2028-02')">FEB</div>
         <div class="index-tab" onclick="switchView('note')">NOTE</div>
       </div>
 
@@ -806,119 +858,183 @@
 
   <script>
     /* ====================================================================
-       2027학년도 학사일정 데이터 (토요일, 일요일은 자동 필터링되어 삭제됨)
+       세일고등학교 원형 로고 SVG 코드 (우측 상단 배치용)
+       ==================================================================== */
+    const seilLogoSvg = `
+      <svg class="school-logo-svg" viewBox="0 0 500 500">
+        <!-- 외곽 이중 원선 -->
+        <circle cx="250" cy="250" r="240" fill="none" stroke="#B2280E" stroke-width="10"/>
+        <circle cx="250" cy="250" r="225" fill="#B2280E"/>
+        <circle cx="250" cy="250" r="172" fill="#FFFFFF"/>
+        
+        <!-- 상단 영문 텍스트 호: SE-IL HIGH SCHOOL 1983 -->
+        <path id="textArcTop" d="M 75,250 A 175,175 0 0,1 425,250" fill="none"/>
+        <text fill="#FFFFFF" font-family="'Montserrat', sans-serif" font-weight="700" font-size="34" letter-spacing="4">
+          <textPath href="#textArcTop" startOffset="50%" text-anchor="middle">
+            SE-IL HIGH SCHOOL 1983
+          </textPath>
+        </text>
+
+        <!-- 하단 국문 텍스트 호: 세 일 고 등 학 교 -->
+        <path id="textArcBottom" d="M 85,250 A 165,165 0 0,0 415,250" fill="none"/>
+        <text fill="#FFFFFF" font-family="'Noto Sans KR', sans-serif" font-weight="700" font-size="33" letter-spacing="14">
+          <textPath href="#textArcBottom" startOffset="50%" text-anchor="middle">
+            세 일 고 등 학 교
+          </textPath>
+        </text>
+
+        <!-- 중앙 심볼 마크 (세일 상징 문양) -->
+        <g stroke="#B2280E" stroke-width="13" stroke-linecap="square" stroke-linejoin="miter" fill="none">
+          <path d="M 170,225 L 295,225 L 295,190" />
+          <path d="M 230,190 L 230,240" />
+          <path d="M 265,190 L 265,240" />
+          <path d="M 205,225 L 205,270 L 360,270 L 360,240" />
+          <path d="M 215,225 C 215,190 170,190 170,225 Z" fill="#B2280E" />
+          <path d="M 315,270 L 325,315 L 290,310" />
+          <path d="M 360,240 C 395,240 395,270 360,270 Z" fill="#B2280E" />
+        </g>
+      </svg>
+    `;
+
+    /* ====================================================================
+       2027학년도(2027.03 ~ 2028.02) 학사일정 데이터 (토/일 자동 필터링)
        ==================================================================== */
     const rawEvents = [
-      { start: '2027-03-02', end: '2027-03-03', summary: '입학식 및 개학식' },
-      { start: '2027-03-05', end: '2027-03-06', summary: '진로적성검사' },
-      { start: '2027-03-10', end: '2027-03-11', summary: '학급회장, 부회장 임명' },
-      { start: '2027-03-12', end: '2027-03-13', summary: '창체동아리활동' },
-      { start: '2027-03-17', end: '2027-03-18', summary: '창체동아리활동' },
-      { start: '2027-03-19', end: '2027-03-20', summary: '학교교육과정 설명회' },
-      { start: '2027-03-24', end: '2027-03-25', summary: '전국연합학력평가' },
-      { start: '2027-03-26', end: '2027-03-27', summary: '창체동아리활동' },
-      { start: '2027-03-31', end: '2027-04-01', summary: '학생건강체력평가(3학년)' },
-      { start: '2027-04-02', end: '2027-04-03', summary: '진로적성검사 결과 분석' },
-      { start: '2027-04-07', end: '2027-04-10', summary: '수련활동(1학년)' },
-      { start: '2027-04-09', end: '2027-04-10', summary: '스포츠한마당(2~3학년)' },
-      { start: '2027-04-12', end: '2027-04-13', summary: '학생자치회 대의원총회' },
-      { start: '2027-04-14', end: '2027-04-15', summary: '학생건강체력평가(2학년)' },
-      { start: '2027-04-16', end: '2027-04-17', summary: '창체동아리활동' },
-      // 1학기 1차 시험: 4.29(목)~4.30(금), 5.3(월)~5.4(화) [토 5/1, 일 5/2 제외]
-      { start: '2027-04-29', end: '2027-04-30', summary: '1학기 1차 시험' },
-      { start: '2027-04-30', end: '2027-05-01', summary: '1학기 1차 시험' },
-      { start: '2027-05-03', end: '2027-05-04', summary: '1학기 1차 시험' },
-      { start: '2027-05-04', end: '2027-05-05', summary: '1학기 1차 시험' },
-      { start: '2027-05-07', end: '2027-05-08', summary: '창체동아리활동' },
-      { start: '2027-05-11', end: '2027-05-12', summary: '전국연합학력평가(3학년)' },
-      { start: '2027-05-12', end: '2027-05-13', summary: '주제통합한마당' },
-      { start: '2027-05-14', end: '2027-05-15', summary: '재량휴업일' },
-      { start: '2027-05-19', end: '2027-05-20', summary: '학생건강체력평가(1학년)' },
-      { start: '2027-05-21', end: '2027-05-22', summary: '학생건강체력평가' },
-      { start: '2027-05-26', end: '2027-05-27', summary: '보카 마스터 챌린지' },
-      { start: '2027-05-28', end: '2027-05-29', summary: '모범학생표창/창체동아리' },
-      { start: '2027-06-02', end: '2027-06-03', summary: '모의평가/전국연합평가' },
-      { start: '2027-06-04', end: '2027-06-05', summary: '현장체험학습' },
-      { start: '2027-06-07', end: '2027-06-12', summary: '수학탐구한마당(~11일)' },
-      { start: '2027-06-09', end: '2027-06-10', summary: '소통공감한마당/공개수업' },
-      { start: '2027-06-11', end: '2027-06-12', summary: '흡연예방교육' },
-      { start: '2027-06-14', end: '2027-06-15', summary: '학생자치회 대의원총회' },
-      { start: '2027-06-18', end: '2027-06-19', summary: '창체동아리활동' },
-      // 1학기 2차 시험: 6.30(수)~7.2(금), 7.5(월)~7.6(화) [토 7/3, 일 7/4 제외]
-      { start: '2027-06-30', end: '2027-07-01', summary: '1학기 2차 시험' },
-      { start: '2027-07-01', end: '2027-07-02', summary: '1학기 2차 시험' },
-      { start: '2027-07-02', end: '2027-07-03', summary: '1학기 2차 시험' },
-      { start: '2027-07-05', end: '2027-07-06', summary: '1학기 2차 시험' },
-      { start: '2027-07-06', end: '2027-07-07', summary: '1학기 2차 시험' },
-      { start: '2027-07-08', end: '2027-07-09', summary: '전국연합학력평가(3학년)' },
-      { start: '2027-07-12', end: '2027-07-16', summary: '교육과정박람회(~15일)' },
-      { start: '2027-07-13', end: '2027-07-14', summary: '학생자치회장/부회장 선거' },
-      { start: '2027-07-14', end: '2027-07-15', summary: '진로탐색의 날' },
-      { start: '2027-07-15', end: '2027-07-16', summary: '방학식 (1학기 종업)' },
-      { start: '2027-08-18', end: '2027-08-19', summary: '2학기 개학식' },
-      { start: '2027-08-20', end: '2027-08-21', summary: '창체동아리활동' },
-      { start: '2027-08-23', end: '2027-08-24', summary: '2학기 학급회장/부회장 임명' },
-      { start: '2027-08-25', end: '2027-08-26', summary: '모의평가/전국연합평가' },
-      { start: '2027-08-27', end: '2027-08-28', summary: '창체동아리활동' },
-      { start: '2027-08-31', end: '2027-09-01', summary: '수시 학생부 작성 기준일' },
-      { start: '2027-09-10', end: '2027-09-11', summary: '진로탐색의 날' },
-      { start: '2027-09-13', end: '2027-09-14', summary: '학생자치회 대의원총회' },
-      { start: '2027-09-17', end: '2027-09-18', summary: '재량휴업' },
-      { start: '2027-09-20', end: '2027-09-24', summary: '수시 원서 접수 기간(~23일)' },
-      { start: '2027-09-24', end: '2027-09-25', summary: '창체동아리활동' },
-      { start: '2027-09-30', end: '2027-10-01', summary: '개교기념일 행사' },
-      { start: '2027-10-01', end: '2027-10-02', summary: '개교기념일' },
-      { start: '2027-10-12', end: '2027-10-16', summary: '2학기 1차 시험(12~15일)' },
-      { start: '2027-10-19', end: '2027-10-20', summary: '전국연합학력평가' },
-      { start: '2027-10-20', end: '2027-10-21', summary: '독서체험한마당' },
-      { start: '2027-10-22', end: '2027-10-23', summary: '과학대제전, 수학축전' },
-      { start: '2027-10-25', end: '2027-10-26', summary: '폭력예방 포스터 전시' },
-      { start: '2027-10-27', end: '2027-10-28', summary: '소통공감한마당/공개수업' },
-      { start: '2027-10-27', end: '2027-10-30', summary: '수학여행(2학년,~29일)' },
-      { start: '2027-10-29', end: '2027-10-30', summary: '모범학생표창/스포츠한마당' },
-      { start: '2027-11-05', end: '2027-11-06', summary: '창체동아리활동' },
-      { start: '2027-11-08', end: '2027-11-09', summary: '학생자치회 대의원총회' },
-      { start: '2027-11-18', end: '2027-11-19', summary: '대학수학능력시험' },
-      { start: '2027-11-26', end: '2027-11-27', summary: '창체동아리활동' },
-      { start: '2027-11-30', end: '2027-12-01', summary: '정시 학생부작성 기준일' },
-      { start: '2027-12-06', end: '2027-12-11', summary: '2학기 2차 시험(6~10일)' },
-      { start: '2027-12-10', end: '2027-12-11', summary: '수능 성적 발표일' },
-      { start: '2027-12-17', end: '2027-12-18', summary: '창체동아리활동' },
-      { start: '2027-12-21', end: '2027-12-22', summary: '수시 합격자 발표마감' },
-      { start: '2027-12-24', end: '2027-12-25', summary: '세일어울림한마당/축제' },
-      { start: '2027-12-30', end: '2027-12-31', summary: '수시 충원마감' },
-      { start: '2027-12-31', end: '2028-01-01', summary: '방학식' }
+      { start: '2027-03-02', summary: '입학식 및 개학식' },
+      { start: '2027-03-05', summary: '진로적성검사' },
+      { start: '2027-03-10', summary: '학급회장, 부회장 임명' },
+      { start: '2027-03-12', summary: '창체동아리활동' },
+      { start: '2027-03-17', summary: '창체동아리활동' },
+      { start: '2027-03-19', summary: '학교교육과정 설명회' },
+      { start: '2027-03-24', summary: '전국연합학력평가' },
+      { start: '2027-03-26', summary: '창체동아리활동' },
+      { start: '2027-03-31', summary: '학생건강체력평가(3학년)' },
+      { start: '2027-04-02', summary: '진로적성검사 결과 분석' },
+      { start: '2027-04-07', summary: '수련활동(1학년)' },
+      { start: '2027-04-08', summary: '수련활동(1학년)' },
+      { start: '2027-04-09', summary: '스포츠한마당(2~3학년)' },
+      { start: '2027-04-12', summary: '학생자치회 대의원총회' },
+      { start: '2027-04-14', summary: '학생건강체력평가(2학년)' },
+      { start: '2027-04-16', summary: '창체동아리활동' },
+      // 1학기 1차 시험 (4.29~30, 5.3~4 / 토일 제외)
+      { start: '2027-04-29', summary: '1학기 1차 시험' },
+      { start: '2027-04-30', summary: '1학기 1차 시험' },
+      { start: '2027-05-03', summary: '1학기 1차 시험' },
+      { start: '2027-05-04', summary: '1학기 1차 시험' },
+      { start: '2027-05-07', summary: '창체동아리활동' },
+      { start: '2027-05-11', summary: '전국연합학력평가(3학년)' },
+      { start: '2027-05-12', summary: '주제통합한마당' },
+      { start: '2027-05-14', summary: '재량휴업일' },
+      { start: '2027-05-19', summary: '학생건강체력평가(1학년)' },
+      { start: '2027-05-21', summary: '학생건강체력평가' },
+      { start: '2027-05-26', summary: '보카 마스터 챌린지' },
+      { start: '2027-05-28', summary: '모범학생표창/창체동아리' },
+      { start: '2027-06-02', summary: '모의평가/전국연합평가' },
+      { start: '2027-06-04', summary: '현장체험학습' },
+      { start: '2027-06-07', summary: '수학탐구한마당' },
+      { start: '2027-06-08', summary: '수학탐구한마당' },
+      { start: '2027-06-09', summary: '소통공감한마당/학부모공개수업' },
+      { start: '2027-06-10', summary: '수학탐구한마당' },
+      { start: '2027-06-11', summary: '흡연예방교육' },
+      { start: '2027-06-14', summary: '학생자치회 대의원총회' },
+      { start: '2027-06-18', summary: '창체동아리활동' },
+      // 1학기 2차 시험 (6.30~7.2, 7.5~6 / 토일 제외)
+      { start: '2027-06-30', summary: '1학기 2차 시험' },
+      { start: '2027-07-01', summary: '1학기 2차 시험' },
+      { start: '2027-07-02', summary: '1학기 2차 시험' },
+      { start: '2027-07-05', summary: '1학기 2차 시험' },
+      { start: '2027-07-06', summary: '1학기 2차 시험' },
+      { start: '2027-07-08', summary: '전국연합학력평가(3학년)' },
+      { start: '2027-07-12', summary: '교육과정박람회' },
+      { start: '2027-07-13', summary: '학생회장/부회장 선거' },
+      { start: '2027-07-14', summary: '진로탐색의 날' },
+      { start: '2027-07-15', summary: '방학식 (1학기 종업)' },
+      { start: '2027-08-18', summary: '2학기 개학식' },
+      { start: '2027-08-20', summary: '창체동아리활동' },
+      { start: '2027-08-23', summary: '2학기 학급회장/부회장 임명' },
+      { start: '2027-08-25', summary: '모의평가/전국연합평가' },
+      { start: '2027-08-27', summary: '창체동아리활동' },
+      { start: '2027-08-31', summary: '수시 학생부 작성 기준일' },
+      { start: '2027-09-10', summary: '진로탐색의 날' },
+      { start: '2027-09-13', summary: '학생자치회 대의원총회' },
+      { start: '2027-09-17', summary: '재량휴업' },
+      { start: '2027-09-20', summary: '수시 원서 접수(~23일)' },
+      { start: '2027-09-24', summary: '창체동아리활동' },
+      { start: '2027-09-30', summary: '개교기념일 행사' },
+      { start: '2027-10-01', summary: '개교기념일' },
+      { start: '2027-10-12', summary: '2학기 1차 시험' },
+      { start: '2027-10-13', summary: '2학기 1차 시험' },
+      { start: '2027-10-14', summary: '2학기 1차 시험' },
+      { start: '2027-10-15', summary: '2학기 1차 시험' },
+      { start: '2027-10-19', summary: '전국연합학력평가' },
+      { start: '2027-10-20', summary: '독서체험한마당' },
+      { start: '2027-10-22', summary: '과학대제전/수학축전' },
+      { start: '2027-10-25', summary: '학교폭력예방 포스터 전시' },
+      { start: '2027-10-27', summary: '수학여행/공개수업' },
+      { start: '2027-10-28', summary: '수학여행' },
+      { start: '2027-10-29', summary: '수학여행/모범학생표창' },
+      { start: '2027-11-05', summary: '창체동아리활동' },
+      { start: '2027-11-08', summary: '학생자치회 대의원총회' },
+      { start: '2027-11-18', summary: '대학수학능력시험' },
+      { start: '2027-11-26', summary: '창체동아리활동' },
+      { start: '2027-11-30', summary: '정시 학생부작성 기준일' },
+      { start: '2027-12-06', summary: '2학기 2차 시험' },
+      { start: '2027-12-07', summary: '2학기 2차 시험' },
+      { start: '2027-12-08', summary: '2학기 2차 시험' },
+      { start: '2027-12-09', summary: '2학기 2차 시험' },
+      { start: '2027-12-10', summary: '2학기 2차 시험/수능성적발표' },
+      { start: '2027-12-17', summary: '창체동아리활동' },
+      { start: '2027-12-21', summary: '수시 합격자 발표마감' },
+      { start: '2027-12-24', summary: '세일어울림한마당/축제' },
+      { start: '2027-12-30', summary: '수시 충원마감' },
+      { start: '2027-12-31', summary: '방학식' },
+      // 2028년 1월 ~ 2월 학사일정
+      { start: '2028-01-03', summary: '정시 원서 접수 시작' },
+      { start: '2028-01-31', summary: '개학식' },
+      { start: '2028-02-07', summary: '졸업식 (3학년)' },
+      { start: '2028-02-08', summary: '종업식 (1,2학년)' },
+      { start: '2028-02-09', summary: '구학년 업무' },
+      { start: '2028-02-10', summary: '구학년 업무 및 이사' },
+      { start: '2028-02-21', summary: '정시 충원 마감' },
+      { start: '2028-02-22', summary: '추가모집 원서접수' },
+      { start: '2028-02-28', summary: '신학년 업무' }
     ];
 
-    // 평일 여부 확인 유틸리티 (0: 일요일, 6: 토요일)
-    function isWeekday(year, month, day) {
-      const d = new Date(year, month, day);
-      const dayOfWeek = d.getDay();
-      return dayOfWeek !== 0 && dayOfWeek !== 6;
+    // 평일 여부 판정 유틸리티
+    function isWeekday(y, m, d) {
+      const dt = new Date(y, m, d);
+      const day = dt.getDay();
+      return day !== 0 && day !== 6;
     }
 
-    // 날짜별 이벤트 맵 생성 (토요일/일요일 제외 필터링)
     const academicCalendar = {};
     rawEvents.forEach(item => {
-      const s = new Date(item.start);
-      const y = s.getFullYear();
-      const m = s.getMonth();
-      const d = s.getDate();
-      
-      // 토요일, 일요일이면 등록하지 않음
-      if (isWeekday(y, m, d)) {
-        const key = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      const [y, m, d] = item.start.split('-').map(Number);
+      if (isWeekday(y, m - 1, d)) {
+        const key = item.start;
         if (!academicCalendar[key]) academicCalendar[key] = [];
         academicCalendar[key].push(item.summary);
       }
     });
 
-    const monthNamesEn = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    
+    // 2027학년도 12개월 목록 (2027.03 ~ 2028.02)
+    const academicMonths = [
+      { year: 2027, month: 2, label: '3월', en: 'March' },
+      { year: 2027, month: 3, label: '4월', en: 'April' },
+      { year: 2027, month: 4, label: '5월', en: 'May' },
+      { year: 2027, month: 5, label: '6월', en: 'June' },
+      { year: 2027, month: 6, label: '7월', en: 'July' },
+      { year: 2027, month: 7, label: '8월', en: 'August' },
+      { year: 2027, month: 8, label: '9월', en: 'September' },
+      { year: 2027, month: 9, label: '10월', en: 'October' },
+      { year: 2027, month: 10, label: '11월', en: 'November' },
+      { year: 2027, month: 11, label: '12월', en: 'December' },
+      { year: 2028, month: 0, label: '1월', en: 'January' },
+      { year: 2028, month: 1, label: '2월', en: 'February' }
+    ];
+
     let currentView = 'yearly';
-    let currentMonth = 2; // 기본 3월
-    let currentWeek = 1;
-    let currentDailyDate = '2027-03-02';
+    let currentAcademicIdx = 0; // 0은 2027년 3월
     let currentNotePattern = 'grid';
 
     function switchView(view) {
@@ -932,30 +1048,32 @@
       ));
       if (activeBtn) activeBtn.classList.add('active');
 
-      // 툴바 서브 컨트롤 가시성
       document.getElementById('monthSelectorWrapper').style.display = (view === 'monthly' || view === 'weekly') ? 'flex' : 'none';
       document.getElementById('weekSelectorWrapper').style.display = (view === 'weekly') ? 'flex' : 'none';
       document.getElementById('daySelectorWrapper').style.display = (view === 'daily') ? 'flex' : 'none';
       document.getElementById('noteStyleWrapper').style.display = (view === 'note') ? 'flex' : 'none';
 
-      // 우측 인덱스 탭 하이라이트
       document.querySelectorAll('.index-tab').forEach((tab, idx) => {
         tab.classList.remove('active');
-        if (view === 'monthly' && idx === currentMonth) tab.classList.add('active');
+        if (view === 'monthly' && idx === currentAcademicIdx) tab.classList.add('active');
         if (view === 'note' && idx === 12) tab.classList.add('active');
       });
 
       renderCurrentView();
     }
 
-    function quickJump(type, monthIdx) {
-      currentMonth = monthIdx;
-      document.getElementById('monthSelect').value = monthIdx;
-      switchView('monthly');
+    function jumpMonth(yearMonthStr) {
+      const idx = academicMonths.findIndex(m => `${m.year}-${String(m.month + 1).padStart(2, '0')}` === yearMonthStr);
+      if (idx !== -1) {
+        currentAcademicIdx = idx;
+        document.getElementById('monthSelect').value = yearMonthStr;
+        switchView('monthly');
+      }
     }
 
-    function changeMonth(val) {
-      currentMonth = parseInt(val, 10);
+    function changeAcademicMonth(val) {
+      const idx = academicMonths.findIndex(m => `${m.year}-${String(m.month + 1).padStart(2, '0')}` === val);
+      if (idx !== -1) currentAcademicIdx = idx;
       renderCurrentView();
     }
 
@@ -969,25 +1087,30 @@
     }
 
     /* ====================================================================
-       1. 연간 플래너 렌더링 (4 x 3 달력)
+       1. 연간 플래너 (4 x 3: 2027.03 ~ 2028.02)
        ==================================================================== */
     function renderYearly(container) {
       let html = `
         <div class="sheet-header">
-          <div class="sheet-title">2027 ACADEMIC CALENDAR</div>
-          <div class="sheet-sub">2027학년도 주요 학사일정 및 연간 플랜</div>
+          <div class="sheet-title-group">
+            <div class="sheet-title">2027 ACADEMIC CALENDAR</div>
+            <div class="sheet-sub">세일고등학교 2027학년도 연간 학사일정 (2027.03 ~ 2028.02)</div>
+          </div>
+          ${seilLogoSvg}
         </div>
         <div class="yearly-grid">
       `;
 
-      for (let m = 0; m < 12; m++) {
-        const firstDay = new Date(2027, m, 1).getDay();
-        const daysInMonth = new Date(2027, m + 1, 0).getDate();
+      academicMonths.forEach(mObj => {
+        const y = mObj.year;
+        const m = mObj.month;
+        const firstDay = new Date(y, m, 1).getDay();
+        const daysInMonth = new Date(y, m + 1, 0).getDate();
 
         html += `
           <div class="month-card">
             <div class="month-card-header">
-              <span class="month-card-title">${m + 1}월 <small style="font-weight:400;color:var(--text-muted);font-size:9px;">${monthNamesEn[m]}</small></span>
+              <span class="month-card-title">${y === 2028 ? "'" + 28 + " " : ""}${mObj.label} <small style="font-weight:400;color:var(--text-muted);font-size:8.5px;">${mObj.en}</small></span>
             </div>
             <table class="calendar-table">
               <thead>
@@ -1010,12 +1133,12 @@
             } else if (date > daysInMonth) {
               html += '<td class="other-month"></td>';
             } else {
-              const dateStr = `2027-${String(m + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+              const dateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
               const events = academicCalendar[dateStr];
               const isSun = (col === 0);
               const isSat = (col === 6);
               let cls = isSun ? 'sun' : (isSat ? 'sat' : '');
-              
+
               if (events && events.length > 0) {
                 cls += ' has-event';
                 events.forEach(ev => {
@@ -1034,7 +1157,6 @@
           <div class="month-events-box" contenteditable="true">
         `;
 
-        // 해당 월 학사일정 목록 (평일만)
         if (eventsInMonth.length > 0) {
           eventsInMonth.slice(0, 3).forEach(ev => {
             const isExam = ev.text.includes('시험') || ev.text.includes('평가');
@@ -1042,33 +1164,43 @@
             html += `<div class="event-item"><span class="event-badge ${badgeClass}">${ev.day}일</span>${ev.text}</div>`;
           });
         }
-        
+
         html += `
             </div>
           </div>
         `;
-      }
+      });
 
       html += `</div>`;
       container.innerHTML = html;
     }
 
     /* ====================================================================
-       2. 월간 플래너 렌더링 (사진 1 스타일: 12개 월 완비)
+       2. 월간 플래너 (사진 1 구조: 12개 월 제공)
        ==================================================================== */
     function renderMonthly(container) {
-      const m = currentMonth;
+      const mObj = academicMonths[currentAcademicIdx];
+      const y = mObj.year;
+      const m = mObj.month;
       const mStr = String(m + 1).padStart(2, '0');
-      const firstDay = new Date(2027, m, 1).getDay();
-      const daysInMonth = new Date(2027, m + 1, 0).getDate();
+      const firstDay = new Date(y, m, 1).getDay();
+      const daysInMonth = new Date(y, m + 1, 0).getDate();
 
       let html = `
+        <div class="sheet-header" style="margin-bottom:6px;">
+          <div class="sheet-title-group">
+            <div class="sheet-title">${y} MONTHLY PLANNER</div>
+            <div class="sheet-sub">세일고등학교 월간 학습 및 학사 계획</div>
+          </div>
+          ${seilLogoSvg}
+        </div>
+
         <div class="monthly-container">
           <!-- 좌측: 월 헤더, 체크리스트, 모눈 메모 -->
           <div class="monthly-left">
             <div class="monthly-header-badge">
               <span class="monthly-num">${mStr}</span>
-              <span class="monthly-en">${monthNamesEn[m]}</span>
+              <span class="monthly-en">${mObj.en}</span>
             </div>
 
             <!-- CHECK LIST (빈 칸) -->
@@ -1120,7 +1252,7 @@
           if ((row === 0 && col < firstDay) || curDate > daysInMonth) {
             html += '<td style="background:#FAF8F5;"></td>';
           } else {
-            const dateStr = `2027-${mStr}-${String(curDate).padStart(2, '0')}`;
+            const dateStr = `${y}-${mStr}-${String(curDate).padStart(2, '0')}`;
             const events = academicCalendar[dateStr];
             const isSun = (col === 0);
             const isSat = (col === 6);
@@ -1138,7 +1270,6 @@
               });
             }
 
-            // 사용자가 자유롭게 입력할 수 있는 빈 칸
             html += `<div class="cell-note" contenteditable="true"></div>`;
             html += `</td>`;
             curDate++;
@@ -1160,23 +1291,28 @@
     }
 
     /* ====================================================================
-       3. 주간 플래너 렌더링 (사진 2 스타일: 1~5주차 제공)
+       3. 주간 플래너
        ==================================================================== */
     function renderWeekly(container) {
       if (!container) container = document.getElementById('mainCanvas');
-      const m = currentMonth;
+      const mObj = academicMonths[currentAcademicIdx];
       const w = parseInt(document.getElementById('weekSelect').value, 10);
-      const mStr = monthNamesEn[m];
 
       let html = `
+        <div class="sheet-header" style="margin-bottom:6px;">
+          <div class="sheet-title-group">
+            <div class="sheet-title">WEEKLY STUDY PLAN</div>
+            <div class="sheet-sub">세일고등학교 주간 목표 및 습관 관리</div>
+          </div>
+          ${seilLogoSvg}
+        </div>
+
         <div class="weekly-container">
-          <!-- 상단: 월 및 주수 표시, 미니 캘린더, To-Do, Tracker -->
           <div class="weekly-top">
-            <!-- 메타 & 미니 캘린더 -->
             <div class="weekly-meta-card">
               <div>
-                <div class="weekly-title-row">${m + 1}월 ${w}주차</div>
-                <div style="font-size:10px; color:var(--text-muted);">${mStr} · WEEK ${w}</div>
+                <div class="weekly-title-row">${mObj.year}년 ${mObj.label} ${w}주차</div>
+                <div style="font-size:10px; color:var(--text-muted);">${mObj.en} · WEEK ${w}</div>
               </div>
               <div style="margin-top:4px;">
                 <div style="font-size:8px; font-weight:700; color:var(--text-muted); margin-bottom:2px;">WEEKLY WRAP-UP</div>
@@ -1184,7 +1320,6 @@
               </div>
             </div>
 
-            <!-- TO-DO LIST (빈 칸) -->
             <div class="box-bordered" style="overflow:hidden;">
               <div class="box-title">TO-DO LIST</div>
               <div style="display:flex; flex-direction:column; gap:5px;">
@@ -1197,7 +1332,6 @@
               </div>
             </div>
 
-            <!-- HABIT TRACKER (빈 칸) -->
             <div class="box-bordered" style="grid-column: span 2; overflow:hidden;">
               <div class="box-title">HABIT TRACKER</div>
               <table class="tracker-table">
@@ -1221,7 +1355,6 @@
             </div>
           </div>
 
-          <!-- 하단: 각 요일별 목표 및 기록 카드 (월, 화, 수, 목 + 금, 토, 일) -->
           <div class="weekly-bottom">
             ${['MON', 'TUE', 'WED', 'THU'].map(day => `
               <div class="day-pill-card">
@@ -1246,7 +1379,7 @@
     }
 
     /* ====================================================================
-       4. 일간 플래너 렌더링 (사진 3 스타일: 매일 제공, 총 공부 시간 포함)
+       4. 일간 플래너
        ==================================================================== */
     function renderDaily(container) {
       if (!container) container = document.getElementById('mainCanvas');
@@ -1258,21 +1391,25 @@
       const events = academicCalendar[dateVal] || [];
 
       let html = `
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid var(--text-main); padding-bottom:4px; margin-bottom:8px;">
-          <div style="display:flex; align-items:baseline; gap:10px;">
-            <span style="font-size:22px; font-weight:700;">${mo}월 ${da}일</span>
-            <span style="font-size:12px; color:var(--text-muted); font-weight:600;">${dayName} / 2027</span>
-            ${events.length > 0 ? `<span style="font-size:10px; background:#FDE8E8; color:#B85D5D; padding:2px 6px; border-radius:3px; font-weight:700;">${events.join(', ')}</span>` : ''}
+        <div class="sheet-header" style="margin-bottom:6px;">
+          <div class="sheet-title-group">
+            <div style="display:flex; align-items:baseline; gap:8px;">
+              <span class="sheet-title">${yr}년 ${mo}월 ${da}일</span>
+              <span style="font-size:12px; color:var(--text-muted); font-weight:600;">${dayName}</span>
+              ${events.length > 0 ? `<span style="font-size:10px; background:#FDE8E8; color:#B85D5D; padding:2px 6px; border-radius:3px; font-weight:700;">${events.join(', ')}</span>` : ''}
+            </div>
+            <div class="sheet-sub">세일고등학교 일일 플래너 & 학습 기록</div>
           </div>
-          <!-- 총 공부 시간 기록 배지 -->
-          <div style="display:flex; align-items:center; gap:8px; background:#FFF; border:1px solid var(--border-color); padding:3px 10px; border-radius:15px;">
-            <span style="font-size:10px; font-weight:700; color:var(--text-muted);">TOTAL STUDY TIME</span>
-            <span style="font-size:12px; font-weight:700; color:#3B5A75;" contenteditable="true">__ h __ m</span>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="display:flex; align-items:center; gap:8px; background:#FFF; border:1px solid var(--border-color); padding:3px 10px; border-radius:15px;">
+              <span style="font-size:10px; font-weight:700; color:var(--text-muted);">TOTAL STUDY</span>
+              <span style="font-size:12px; font-weight:700; color:#3B5A75;" contenteditable="true">__ h __ m</span>
+            </div>
+            ${seilLogoSvg}
           </div>
         </div>
 
         <div class="daily-container">
-          <!-- 좌측: GOAL, CHECK LIST, THANKS TO (모두 빈 칸) -->
           <div class="daily-col">
             <div class="goal-card">
               <div class="box-title">TODAY'S GOAL</div>
@@ -1292,12 +1429,11 @@
             </div>
 
             <div class="thanks-card">
-              <div class="box-title">THANKS TO / REVIEW</div>
+              <div class="box-title">FEEDBACK / THANKS TO</div>
               <div style="flex:1;" contenteditable="true"></div>
             </div>
           </div>
 
-          <!-- 중앙: 04:00 ~ 02:00 타임테이블 (빈 칸) -->
           <div class="daily-col">
             <div class="timetable-card">
               <div class="tt-header">
@@ -1319,7 +1455,6 @@
             </div>
           </div>
 
-          <!-- 우측: 과목별/지출 기록, 명언, 기분/물 트래커, 모눈 노트 -->
           <div class="daily-col">
             <div class="daily-right-top">
               <div class="box-bordered">
@@ -1338,17 +1473,17 @@
                 <div style="display:flex; align-items:center; gap:6px;">
                   <span class="box-title" style="margin:0;">MOOD</span>
                   <div class="icon-list">
-                    <span class="mood-icon" onclick="toggleActive(this)">😊</span>
-                    <span class="mood-icon" onclick="toggleActive(this)">🙂</span>
-                    <span class="mood-icon" onclick="toggleActive(this)">😐</span>
-                    <span class="mood-icon" onclick="toggleActive(this)">😣</span>
-                    <span class="mood-icon" onclick="toggleActive(this)">😴</span>
+                    <span class="mood-icon" onclick="this.classList.toggle('active')">😊</span>
+                    <span class="mood-icon" onclick="this.classList.toggle('active')">🙂</span>
+                    <span class="mood-icon" onclick="this.classList.toggle('active')">😐</span>
+                    <span class="mood-icon" onclick="this.classList.toggle('active')">😣</span>
+                    <span class="mood-icon" onclick="this.classList.toggle('active')">😴</span>
                   </div>
                 </div>
                 <div style="display:flex; align-items:center; gap:6px;">
                   <span class="box-title" style="margin:0;">WATER</span>
                   <div class="icon-list">
-                    ${[1, 2, 3, 4, 5].map(() => `<span class="cup-icon" onclick="toggleActive(this)">💧</span>`).join('')}
+                    ${[1, 2, 3, 4, 5].map(() => `<span class="cup-icon" onclick="this.classList.toggle('active')">💧</span>`).join('')}
                   </div>
                 </div>
               </div>
@@ -1363,35 +1498,78 @@
       container.innerHTML = html;
     }
 
-    function toggleActive(elem) {
-      elem.classList.toggle('active');
-    }
-
     /* ====================================================================
-       5. 메모 노트 (무지, 도트, 라인, 모눈종이 선택 가능)
+       5. 메모 노트 (코넬식, 오답노트, 그리드, 라인, 도트, 무지)
        ==================================================================== */
     function renderNote(container) {
-      let html = `
-        <div class="note-container">
-          <div class="sheet-header">
-            <div class="sheet-title">STUDY NOTE</div>
-            <div class="sheet-sub">자유 메모, 오답 정리, 개념 구조화 노트</div>
+      let contentHtml = '';
+
+      if (currentNotePattern === 'cornell') {
+        contentHtml = `
+          <div class="cornell-wrapper">
+            <div class="cornell-top">
+              <div class="cornell-cue">
+                <div class="box-title">CUES / KEYWORDS (단서 / 키워드)</div>
+                <div style="flex:1;" contenteditable="true"></div>
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column; padding:8px;">
+                <div class="box-title">NOTES (학습 필기 및 세부 내용)</div>
+                <div class="cornell-notes" contenteditable="true"></div>
+              </div>
+            </div>
+            <div class="cornell-summary">
+              <div class="box-title">SUMMARY (요약 및 핵심 개념)</div>
+              <div style="flex:1;" contenteditable="true"></div>
+            </div>
           </div>
-          <div id="noteContentArea" class="note-pattern-area pattern-${currentNotePattern}" contenteditable="true"></div>
+        `;
+      } else if (currentNotePattern === 'wrong') {
+        contentHtml = `
+          <div class="wrong-answer-wrapper">
+            <div class="wrong-card">
+              <div class="box-title">1. 문제 / 출처 (PROBLEM & SOURCE)</div>
+              <div style="flex:1;" contenteditable="true"></div>
+            </div>
+            <div class="wrong-card">
+              <div class="box-title">2. 오답 원인 분석 (MY MISTAKE & WEAK POINT)</div>
+              <div style="flex:1;" contenteditable="true"></div>
+            </div>
+            <div class="wrong-card">
+              <div class="box-title">3. 바른 풀이 과정 (CORRECT SOLUTION)</div>
+              <div style="flex:1;" contenteditable="true"></div>
+            </div>
+            <div class="wrong-card">
+              <div class="box-title">4. 핵심 개념 & 행동 요령 (KEY CONCEPTS & RULES)</div>
+              <div style="flex:1; background-image:radial-gradient(#C5BFB5 1px, transparent 1px); background-size:5mm 5mm;" contenteditable="true"></div>
+            </div>
+          </div>
+        `;
+      } else {
+        contentHtml = `<div class="note-pattern-area pattern-${currentNotePattern}" style="flex:1; border:1px solid var(--border-light); border-radius:4px; padding:10px;" contenteditable="true"></div>`;
+      }
+
+      let html = `
+        <div class="sheet-header" style="margin-bottom:6px;">
+          <div class="sheet-title-group">
+            <div class="sheet-title">ACADEMIC NOTE (${currentNotePattern.toUpperCase()})</div>
+            <div class="sheet-sub">세일고등학교 자기주도 학습 및 개념 정리 노트</div>
+          </div>
+          ${seilLogoSvg}
+        </div>
+        <div class="note-container">
+          ${contentHtml}
         </div>
       `;
+
       container.innerHTML = html;
     }
 
     function changeNotePattern(pattern) {
       currentNotePattern = pattern;
-      const target = document.getElementById('noteContentArea');
-      if (target) {
-        target.className = `note-pattern-area pattern-${pattern}`;
-      }
+      renderNote(document.getElementById('mainCanvas'));
     }
 
-    // 초기 로딩 시 연간 플래너 렌더링
+    // 초기 화면 실행
     window.onload = function() {
       switchView('yearly');
     };
