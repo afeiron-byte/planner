@@ -14,7 +14,6 @@
       --border-light: #ECE8E1;
       --text-main: #33312E;
       --text-muted: #8E887E;
-      --school-red: #B2280E;
       --accent: #5C5248;
       --accent-exam: #B85D5D;
       --accent-sat: #4B6E94;
@@ -140,7 +139,7 @@
       min-width: 0;
     }
 
-    /* 우측 고정 인덱스 탭 (3월 ~ 익년 2월 + NOTE) */
+    /* 우측 고정 인덱스 탭 */
     .right-sidebar {
       width: 24px;
       height: 100%;
@@ -178,7 +177,7 @@
       border-bottom: 2px solid var(--text-main);
       padding-bottom: 4px;
       margin-bottom: 6px;
-      height: 38px;
+      height: 40px;
       flex-shrink: 0;
     }
     .sheet-title-group {
@@ -196,12 +195,11 @@
       color: var(--text-muted);
     }
 
-    /* 세일고 CI 로고 이미지 */
+    /* 로고 이미지 - 비율 안 깨지게 object-fit 적용 */
     .school-logo-img {
-      height: 34px;
+      max-height: 36px;
       width: auto;
       object-fit: contain;
-      flex-shrink: 0;
     }
 
     /* contenteditable 스타일 */
@@ -215,7 +213,7 @@
     }
 
     /* =========================================================
-       1. 연간 플래너 (4 x 3: 2027.03 ~ 2028.02)
+       1. 연간 플래너
        ========================================================= */
     .yearly-grid {
       display: grid;
@@ -223,7 +221,7 @@
       grid-template-rows: repeat(3, 1fr);
       gap: 6px;
       flex: 1;
-      height: calc(100% - 44px);
+      height: calc(100% - 46px);
     }
 
     .month-card {
@@ -277,31 +275,31 @@
       border-radius: 50%;
     }
 
-    /* 캘린더 아래 2단 다단 행사 목록 (각 열 6줄 기준) */
+    /* 캘린더 아래 2단 다단 행사 목록 (각 열 6줄 기준, 누락 방지) */
     .month-events-box {
       margin-top: 3px;
       border-top: 1px dashed var(--border-light);
-      padding-top: 2px;
+      padding-top: 3px;
       flex: 1;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      column-gap: 4px;
-      row-gap: 1px;
+      column-gap: 5px;
+      row-gap: 1.5px;
       overflow: hidden;
     }
     .event-col {
       display: flex;
       flex-direction: column;
-      gap: 1px;
+      gap: 1.5px;
     }
     .event-item {
       font-size: 6.8px;
-      line-height: 1.25;
+      line-height: 1.3;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       color: #444;
-      height: 10px;
+      height: 9px;
     }
     .event-badge {
       display: inline-block;
@@ -321,7 +319,7 @@
       display: flex;
       gap: 10px;
       flex: 1;
-      height: calc(100% - 44px);
+      height: calc(100% - 46px);
     }
 
     .monthly-left {
@@ -472,7 +470,7 @@
     .weekly-container {
       display: flex;
       flex-direction: column;
-      height: calc(100% - 44px);
+      height: calc(100% - 46px);
       gap: 6px;
     }
 
@@ -555,9 +553,9 @@
        ========================================================= */
     .daily-container {
       display: grid;
-      grid-template-columns: 26% 28% 46%; /* 타임테이블 축소 & 우측 셀 공간 대폭 확보 */
+      grid-template-columns: 26% 24% 48%; /* 우측 공간 대폭 확장하여 잘림 완벽 방지 */
       gap: 8px;
-      height: calc(100% - 44px);
+      height: calc(100% - 46px);
       width: 100%;
       min-width: 0;
     }
@@ -574,7 +572,7 @@
       border: 1px solid var(--border-color);
       background: var(--card-bg);
       border-radius: 4px;
-      padding: 6px 8px;
+      padding: 5px 7px;
       height: 24%;
       display: flex;
       flex-direction: column;
@@ -583,7 +581,7 @@
       border: 1px solid var(--border-color);
       background: var(--card-bg);
       border-radius: 4px;
-      padding: 6px 8px;
+      padding: 5px 7px;
       height: 54%;
       display: flex;
       flex-direction: column;
@@ -592,7 +590,7 @@
       border: 1px solid var(--border-color);
       background: var(--card-bg);
       border-radius: 4px;
-      padding: 6px 8px;
+      padding: 5px 7px;
       height: 22%;
       display: flex;
       flex-direction: column;
@@ -602,7 +600,7 @@
       border: 1px solid var(--border-color);
       background: var(--card-bg);
       border-radius: 4px;
-      padding: 5px 6px;
+      padding: 4px 5px;
       height: 100%;
       display: flex;
       flex-direction: column;
@@ -612,7 +610,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
       padding-bottom: 2px;
       border-bottom: 1px solid var(--border-light);
     }
@@ -629,8 +627,8 @@
       height: calc(100% / 23);
     }
     .time-label {
-      width: 28px;
-      font-size: 8px;
+      width: 25px;
+      font-size: 7.5px;
       color: var(--text-muted);
       font-weight: 600;
       flex-shrink: 0;
@@ -645,6 +643,7 @@
       min-width: 0;
     }
 
+    /* 우측 컬럼 박스 패딩 최적화 및 잘림 방지 */
     .daily-right-top {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -657,7 +656,7 @@
       border: 1px solid var(--border-color);
       background: var(--card-bg);
       border-radius: 4px;
-      padding: 6px 8px;
+      padding: 5px 7px;
       display: flex;
       flex-direction: column;
       min-width: 0;
@@ -667,15 +666,15 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 4px 0;
+      padding: 3px 0;
       border-bottom: 1px solid var(--border-light);
     }
     .icon-list {
       display: flex;
-      gap: 5px;
+      gap: 4px;
     }
     .mood-icon, .cup-icon {
-      font-size: 11px;
+      font-size: 10.5px;
       cursor: pointer;
       opacity: 0.45;
     }
@@ -685,11 +684,11 @@
     }
 
     /* =========================================================
-       5. 메모 노트 (코넬식, 오답노트, 그리드, 라인, 도트, 무지)
+       5. 메모 노트
        ========================================================= */
     .note-container {
       width: 100%;
-      height: calc(100% - 44px);
+      height: calc(100% - 46px);
       border: 1px solid var(--border-color);
       background: var(--card-bg);
       border-radius: 4px;
@@ -750,7 +749,7 @@
       background: #FAF8F5;
     }
 
-    /* 오답 정리 노트 (4번 셀도 완전 무지 Blank 적용) */
+    /* 오답 정리 노트 */
     .wrong-answer-wrapper {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -793,7 +792,7 @@
 </head>
 <body>
 
-  <!-- 상단 제어 바 (화면 전용) -->
+  <!-- 상단 제어 바 -->
   <div class="toolbar">
     <div class="toolbar-left">
       <button class="nav-btn active" onclick="switchView('yearly')">연간 플래너</button>
@@ -858,10 +857,10 @@
   <div class="page-sheet">
     <div class="planner-container">
       
-      <!-- 주 작업 영역 -->
+      <!-- 메인 캔버스 -->
       <div class="main-canvas" id="mainCanvas"></div>
 
-      <!-- 우측 고정 인덱스 탭 (3월 ~ 익년 2월 순환) -->
+      <!-- 우측 인덱스 탭 -->
       <div class="right-sidebar">
         <div class="index-tab" onclick="jumpMonth('2027-03')">MAR</div>
         <div class="index-tab" onclick="jumpMonth('2027-04')">APR</div>
@@ -882,12 +881,9 @@
   </div>
 
   <script>
-    // 세일고CI-01.png 파일 직접 로드 (깨짐 방지 및 정밀 렌더링)
+    // 첨부될 로고 이미지 연결
     const seilLogoHtml = `<img src="세일고CI-01.png" alt="세일고 로고" class="school-logo-img">`;
 
-    /* ====================================================================
-       2027학년도(2027.03 ~ 2028.02) 학사일정 데이터 (토/일 제외)
-       ==================================================================== */
     const rawEvents = [
       { start: '2027-03-02', summary: '입학식 및 개학식' },
       { start: '2027-03-05', summary: '진로적성검사' },
@@ -905,7 +901,6 @@
       { start: '2027-04-12', summary: '학생자치회 대의원총회' },
       { start: '2027-04-14', summary: '학생건강체력평가(2학년)' },
       { start: '2027-04-16', summary: '창체동아리활동' },
-      // 1학기 1차 시험
       { start: '2027-04-29', summary: '1학기 1차 시험' },
       { start: '2027-04-30', summary: '1학기 1차 시험' },
       { start: '2027-05-03', summary: '1학기 1차 시험' },
@@ -927,7 +922,6 @@
       { start: '2027-06-11', summary: '흡연예방교육' },
       { start: '2027-06-14', summary: '학생자치회 대의원총회' },
       { start: '2027-06-18', summary: '창체동아리활동' },
-      // 1학기 2차 시험
       { start: '2027-06-30', summary: '1학기 2차 시험' },
       { start: '2027-07-01', summary: '1학기 2차 시험' },
       { start: '2027-07-02', summary: '1학기 2차 시험' },
@@ -977,7 +971,6 @@
       { start: '2027-12-24', summary: '세일어울림한마당/축제' },
       { start: '2027-12-30', summary: '수시 충원마감' },
       { start: '2027-12-31', summary: '방학식' },
-      // 2028년 1월 ~ 2월 학사일정
       { start: '2028-01-03', summary: '정시 원서 접수 시작' },
       { start: '2028-01-31', summary: '개학식' },
       { start: '2028-02-07', summary: '졸업식 (3학년)' },
@@ -995,7 +988,6 @@
       return day !== 0 && day !== 6;
     }
 
-    // 학생건강체력평가는 일반 행사로 분류, 시험/학력평가만 빨간색
     function isExamEvent(text) {
       if (text.includes('학생건강체력평가')) return false;
       return text.includes('시험') || text.includes('학력평가') || text.includes('모의평가') || text.includes('대학수학능력시험');
@@ -1080,7 +1072,7 @@
     }
 
     /* =========================================================
-       1. 연간 플래너 (각 월별 행사 2단 다단 분할: 좌측 6개, 우측 6개)
+       1. 연간 플래너 (각 월별 행사 2단 다단 분할: 좌 6개 / 우 나머지)
        ========================================================= */
     function renderYearly(container) {
       let html = `
@@ -1150,11 +1142,10 @@
           <div class="month-events-box" contenteditable="true">
         `;
 
-        // 2단 분할 (좌측 최대 6개, 우측 나머지 최대 6개)
+        // 2단 분할 (좌측 최대 6개, 우측 나머지)
         const leftColEvents = eventsInMonth.slice(0, 6);
         const rightColEvents = eventsInMonth.slice(6, 12);
 
-        // 왼쪽 다단
         html += `<div class="event-col">`;
         leftColEvents.forEach(ev => {
           const isExam = isExamEvent(ev.text);
@@ -1163,7 +1154,6 @@
         });
         html += `</div>`;
 
-        // 오른쪽 다단
         html += `<div class="event-col">`;
         rightColEvents.forEach(ev => {
           const isExam = isExamEvent(ev.text);
@@ -1203,14 +1193,12 @@
         </div>
 
         <div class="monthly-container">
-          <!-- 좌측: 월 헤더, 체크리스트, 모눈 메모 -->
           <div class="monthly-left">
             <div class="monthly-header-badge">
               <span class="monthly-num">${mStr}</span>
               <span class="monthly-en">${mObj.en}</span>
             </div>
 
-            <!-- CHECK LIST (빈 칸) -->
             <div class="box-bordered" style="height: 38%;">
               <div class="box-title">CHECK LIST</div>
               <div class="checklist-list">
@@ -1223,14 +1211,12 @@
               </div>
             </div>
 
-            <!-- MEMO 그리드 영역 (빈 칸) -->
             <div class="box-bordered" style="height: 52%;">
               <div class="box-title">MEMO</div>
               <div class="grid-note-area" contenteditable="true"></div>
             </div>
           </div>
 
-          <!-- 우측: 달력 테이블 + 주수(Week) 표기 -->
           <div class="monthly-right">
             <table class="month-cal-table">
               <thead>
@@ -1386,7 +1372,7 @@
     }
 
     /* =========================================================
-       4. 일간 플래너 (우측 잘림 문제 완벽 해결)
+       4. 일간 플래너 (우측 잘림 방지를 위해 타임테이블 축소/우측 확장)
        ========================================================= */
     function renderDaily(container) {
       if (!container) container = document.getElementById('mainCanvas');
@@ -1423,8 +1409,8 @@
           </div>
         </div>
 
-        <div class="daily-container">
-          <!-- 좌측 컬럼 (26%) -->
+        <!-- 26% / 24% / 50% 비율 적용하여 우측 잘림 원천 봉쇄 -->
+        <div class="daily-container" style="grid-template-columns: 26% 24% 48%;">
           <div class="daily-col">
             <div class="goal-card">
               <div class="box-title">TODAY'S GOAL</div>
@@ -1449,12 +1435,11 @@
             </div>
           </div>
 
-          <!-- 중앙 타임테이블 (28%: 폭 축소하여 우측 공간 확보) -->
           <div class="daily-col">
             <div class="timetable-card">
               <div class="tt-header">
                 <span class="box-title" style="margin:0;">TIME TABLE</span>
-                <span style="font-size:7.5px; color:var(--text-muted);">04:00 - 02:00</span>
+                <span style="font-size:7px; color:var(--text-muted);">04:00 - 02:00</span>
               </div>
               <div class="time-slot-list">
                 ${Array.from({ length: 23 }, (_, i) => {
@@ -1471,7 +1456,7 @@
             </div>
           </div>
 
-          <!-- 우측 컬럼 (46%: 넉넉하게 확장되어 잘림 완벽 방지) -->
+          <!-- 넓어진 우측 영역 (잘림 방지) -->
           <div class="daily-col">
             <div class="daily-right-top">
               <div class="box-bordered">
@@ -1516,7 +1501,7 @@
     }
 
     /* =========================================================
-       5. 메모 노트 (오답정리노트 4번 셀: 무지 형태 적용)
+       5. 메모 노트
        ========================================================= */
     function renderNote(container) {
       let contentHtml = '';
@@ -1555,7 +1540,7 @@
               <div class="box-title">3. 바른 풀이 과정 (CORRECT SOLUTION)</div>
               <div style="flex:1;" contenteditable="true"></div>
             </div>
-            <!-- 4번 셀: 도트 제거 및 완전 무지 Blank 적용 -->
+            <!-- 4번 셀 배경 도트 완전 제거 및 무지(#FFFFFF) 적용 -->
             <div class="wrong-card">
               <div class="box-title">4. 핵심 개념 & 행동 요령 (KEY CONCEPTS & RULES)</div>
               <div style="flex:1; background:#FFFFFF;" contenteditable="true"></div>
