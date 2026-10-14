@@ -121,6 +121,18 @@
       overflow: hidden;
     }
 
+    /* 기존 레이아웃에 영향을 주지 않는 우측 하단 고정 푸터 */
+    .school-footer {
+      position: absolute;
+      bottom: 3.2mm;
+      right: 10mm;
+      font-size: 8px;
+      color: var(--text-muted);
+      letter-spacing: 0.2px;
+      pointer-events: none;
+      z-index: 10;
+    }
+
     /* 플래너 프레임 내부 그리드 */
     .planner-container {
       width: 100%;
@@ -247,7 +259,7 @@
       color: var(--text-main);
     }
 
-    /* 캘린더 글자 크기 및 주별 간격(높이) 확보 */
+    /* 캘린더 글자 크기 8px 및 주별 간격(높이) 확보 */
     .calendar-table {
       width: 100%;
       border-collapse: collapse;
@@ -837,9 +849,9 @@
       <div id="noteStyleWrapper" class="sub-control" style="display:none;">
         <label>노트 서식:</label>
         <select id="notePatternSelect" onchange="changeNotePattern(this.value)">
-          <option value="wrong">오답 정리 노트 (Error Analysis)</option>
+          <option value="wrong" selected>오답 정리 노트 (Error Analysis)</option>
           <option value="cornell">코넬식 노트 (Cornell)</option>
-          <option value="grid" selected>모눈종이 (Grid)</option>
+          <option value="grid">모눈종이 (Grid)</option>
           <option value="lined">라인형 (Lined)</option>
           <option value="dot">도트형 (Dot)</option>
           <option value="blank">무지형 (Blank)</option>
@@ -875,6 +887,9 @@
       </div>
 
     </div>
+
+    <!-- 모든 탭/페이지 우측 하단 고정 학교 홈페이지 문구 -->
+    <div class="school-footer">학교 홈페이지(https://seilhs.icehs.kr/main.do)</div>
   </div>
 
   <script>
