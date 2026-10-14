@@ -404,12 +404,34 @@
       min-height: 14px;
     }
 
+    /* PDF 저장 시 래스터화(흐려짐) 방지를 위한 순수 벡터 패턴 컨테이너 */
+    .vector-pattern-box {
+      position: relative;
+      overflow: hidden;
+      background-color: #FFFFFF;
+    }
+    .vector-bg-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      display: block;
+    }
+    .vector-edit-layer {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      outline: none;
+    }
+
     .grid-note-area {
       flex: 1;
-      background-size: 5mm 5mm;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cline x1='0' y1='0' x2='100%25' y2='0' stroke='%23D5CFC7' stroke-width='0.8'/%3E%3Cline x1='0' y1='0' x2='0' y2='100%25' stroke='%23D5CFC7' stroke-width='0.8'/%3E%3C/svg%3E");
-      border-right: 0.8px solid #D5CFC7;
-      border-bottom: 0.8px solid #D5CFC7;
+      border-right: 0.8px solid #D2CBC0;
+      border-bottom: 0.8px solid #D2CBC0;
       min-height: 120px;
     }
 
@@ -553,9 +575,7 @@
     }
     .day-pill-content {
       flex: 1;
-      padding: 5px;
-      background-size: 4mm 4mm;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cline x1='0' y1='0' x2='100%25' y2='0' stroke='%23D5CFC7' stroke-width='0.8'/%3E%3Cline x1='0' y1='0' x2='0' y2='100%25' stroke='%23D5CFC7' stroke-width='0.8'/%3E%3C/svg%3E");
+      border-top: 0.6px solid #D8D2C9;
     }
 
     /* =========================================================
@@ -707,23 +727,12 @@
     }
 
     .pattern-blank { background: #FFFFFF; }
-    .pattern-dot {
+    .pattern-dot, .pattern-lined, .pattern-grid {
       background-color: #FFFFFF;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='2' cy='2' r='1.1' fill='%23B0A89E'/%3E%3C/svg%3E");
-      background-size: 5mm 5mm;
-    }
-    .pattern-lined {
-      background-color: #FFFFFF;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cline x1='0' y1='100%25' x2='100%25' y2='100%25' stroke='%23CFC8BE' stroke-width='1.2'/%3E%3C/svg%3E");
-      background-size: 100% 7mm;
-      line-height: 7mm;
     }
     .pattern-grid {
-      background-color: #FFFFFF;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cline x1='0' y1='0' x2='100%25' y2='0' stroke='%23D5CFC7' stroke-width='0.9'/%3E%3Cline x1='0' y1='0' x2='0' y2='100%25' stroke='%23D5CFC7' stroke-width='0.9'/%3E%3C/svg%3E");
-      background-size: 5mm 5mm;
-      border-right: 0.9px solid #D5CFC7;
-      border-bottom: 0.9px solid #D5CFC7;
+      border-right: 0.8px solid #D2CBC0;
+      border-bottom: 0.8px solid #D2CBC0;
     }
 
     .cornell-wrapper {
@@ -747,10 +756,6 @@
     }
     .cornell-notes {
       flex: 1;
-      padding: 0 8px;
-      background-color: #FFFFFF;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cline x1='0' y1='100%25' x2='100%25' y2='100%25' stroke='%23CFC8BE' stroke-width='1.2'/%3E%3C/svg%3E");
-      background-size: 100% 7mm;
       line-height: 7mm;
     }
     .cornell-summary {
@@ -896,6 +901,50 @@
 
   <script>
     const seilLogoHtml = `<img src="세일고CI-01.png" alt="세일고 로고" class="school-logo-img">`;
+
+    // PDF 인쇄 시에도 100% 벡터로 출력되는 인라인 SVG 패턴 생성 함수
+    let svgPatternSeq = 0;
+    function getVectorPatternSvg(type) {
+      const uid = `vec_pat_${++svgPatternSeq}`;
+      if (type === 'grid5') {
+        return `<svg class="vector-bg-svg" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="${uid}" width="5mm" height="5mm" patternUnits="userSpaceOnUse">
+              <path d="M 0 0 L 100 0 M 0 0 L 0 100" fill="none" stroke="#D2CBC0" stroke-width="0.7" shape-rendering="crispEdges"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#${uid})" />
+        </svg>`;
+      } else if (type === 'grid4') {
+        return `<svg class="vector-bg-svg" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="${uid}" width="4mm" height="4mm" patternUnits="userSpaceOnUse">
+              <path d="M 0 0 L 100 0 M 0 0 L 0 100" fill="none" stroke="#D8D2C9" stroke-width="0.65" shape-rendering="crispEdges"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#${uid})" />
+        </svg>`;
+      } else if (type === 'lined') {
+        return `<svg class="vector-bg-svg" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="${uid}" width="10mm" height="7mm" patternUnits="userSpaceOnUse">
+              <line x1="0" y1="7mm" x2="10mm" y2="7mm" stroke="#C8C0B4" stroke-width="0.85" shape-rendering="crispEdges"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#${uid})" />
+        </svg>`;
+      } else if (type === 'dot') {
+        return `<svg class="vector-bg-svg" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="${uid}" width="5mm" height="5mm" patternUnits="userSpaceOnUse">
+              <circle cx="2.5mm" cy="2.5mm" r="0.9" fill="#B0A89E"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#${uid})" />
+        </svg>`;
+      }
+      return '';
+    }
 
     const rawEvents = [
       { start: '2027-03-02', summary: '입학식 및 개학식' },
@@ -1226,7 +1275,10 @@
 
             <div class="box-bordered" style="height: 52%;">
               <div class="box-title">MEMO</div>
-              <div class="grid-note-area" contenteditable="true"></div>
+              <div class="grid-note-area vector-pattern-box">
+                ${getVectorPatternSvg('grid5')}
+                <div class="vector-edit-layer" style="padding:4px;" contenteditable="true"></div>
+              </div>
             </div>
           </div>
 
@@ -1365,7 +1417,10 @@
             ${['MON', 'TUE', 'WED', 'THU'].map(day => `
               <div class="day-pill-card">
                 <div class="day-pill-header">${day}</div>
-                <div class="day-pill-content" contenteditable="true"></div>
+                <div class="day-pill-content vector-pattern-box">
+                  ${getVectorPatternSvg('grid4')}
+                  <div class="vector-edit-layer" style="padding:5px;" contenteditable="true"></div>
+                </div>
               </div>
             `).join('')}
           </div>
@@ -1374,7 +1429,10 @@
             ${['FRI', 'SAT', 'SUN', 'WEEKLY NOTE'].map(day => `
               <div class="day-pill-card">
                 <div class="day-pill-header" style="${day === 'SAT' ? 'color:var(--accent-sat);' : day === 'SUN' ? 'color:var(--accent-sun);' : ''}">${day}</div>
-                <div class="day-pill-content" contenteditable="true"></div>
+                <div class="day-pill-content vector-pattern-box">
+                  ${getVectorPatternSvg('grid4')}
+                  <div class="vector-edit-layer" style="padding:5px;" contenteditable="true"></div>
+                </div>
               </div>
             `).join('')}
           </div>
@@ -1502,7 +1560,10 @@
               </div>
 
               <div class="box-title" style="margin-top:5px;">NOTE & SUMMARY</div>
-              <div class="grid-note-area" style="flex:1;" contenteditable="true"></div>
+              <div class="grid-note-area vector-pattern-box" style="flex:1;">
+                ${getVectorPatternSvg('grid5')}
+                <div class="vector-edit-layer" style="padding:4px;" contenteditable="true"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -1527,7 +1588,10 @@
               </div>
               <div style="flex:1; display:flex; flex-direction:column; padding:8px;">
                 <div class="box-title">NOTES (학습 필기 및 세부 내용)</div>
-                <div class="cornell-notes" contenteditable="true"></div>
+                <div class="cornell-notes vector-pattern-box">
+                  ${getVectorPatternSvg('lined')}
+                  <div class="vector-edit-layer" style="padding:0 6px;" contenteditable="true"></div>
+                </div>
               </div>
             </div>
             <div class="cornell-summary">
@@ -1558,7 +1622,13 @@
           </div>
         `;
       } else {
-        contentHtml = `<div class="note-pattern-area pattern-${currentNotePattern}" style="flex:1; border:1px solid var(--border-light); border-radius:4px; padding:10px;" contenteditable="true"></div>`;
+        const vecType = currentNotePattern === 'grid' ? 'grid5' : currentNotePattern;
+        contentHtml = `
+          <div class="note-pattern-area pattern-${currentNotePattern} vector-pattern-box" style="flex:1; border:1px solid var(--border-color); border-radius:4px;">
+            ${getVectorPatternSvg(vecType)}
+            <div class="vector-edit-layer" style="padding:10px;" contenteditable="true"></div>
+          </div>
+        `;
       }
 
       let html = `
